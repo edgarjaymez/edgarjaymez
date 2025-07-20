@@ -1,10 +1,43 @@
 @import 'tailwindcss';
 
 @theme {
+	/* font-family */
 	--font-sans:
 		'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
 		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 	--font-serif: 'Space Grotesk', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+	/* colors */
+	--color-*: initial;
+	--color-primary-50: #e4ecfb;
+	--color-primary-100: #cad9f7;
+	--color-primary-200: #94b3ef;
+	--color-primary-300: #6893e9;
+	--color-primary-400: #356ad4;
+	--color-primary-500: #1a4db2;
+	--color-primary-600: #164197;
+	--color-primary-700: #12367d;
+	--color-primary-800: #0e2a62;
+	--color-primary-900: #0a2047;
+	--color-primary-950: #08193a;
+	--color-base-light: #ffffff;
+	--color-base-dark: #141414;
+	--color-feedback-success: #1b5e20;
+	--color-feedback-success-light: #effbf0;
+	--color-feedback-warning: #cc4e0b;
+	--color-feedback-warning-light: #fdebe2;
+	--color-feedback-error: #9b0808;
+	--color-feedback-error-light: #fdeded;
+	--color-gray-50: #f9fafb;
+	--color-gray-100: #e0e4eb;
+	--color-gray-200: #c8cfda;
+	--color-gray-300: #afb9ca;
+	--color-gray-400: #97a4ba;
+	--color-gray-500: #7e8fa9;
+	--color-gray-600: #667a99;
+	--color-gray-700: #566681;
+	--color-gray-800: #455268;
+	--color-gray-900: #353f50;
+	--color-gray-950: #252b37;
 }
 
 /* --- Font Declarations --- */
