@@ -38,6 +38,21 @@
 	--color-gray-800: #455268;
 	--color-gray-900: #353f50;
 	--color-gray-950: #252b37;
+	/* font-size */
+	--text-xs: 0.75rem;
+	--text-sm: 0.875rem;
+	--text-base: 1rem;
+	--text-lg: 1.125rem;
+	--text-xl: 1.25rem;
+	--text-2xl: 1.5rem;
+	--text-3xl: 1.75rem;
+	--text-4xl: 2rem;
+	--text-5xl: 2.25rem;
+	--text-6xl: 2.5rem;
+	--text-7xl: 2.75rem;
+	--text-8xl: 3rem;
+	--text-9xl: 3.5rem;
+	--text-10xl: 4rem;
 }
 
 /* --- Font Declarations --- */
@@ -115,4 +130,103 @@
 	src:
 		url('/fonts/serif/SpaceGrotesk-Bold.woff2') format('woff2'),
 		url('/fonts/serif/SpaceGrotesk-Bold.woff') format('woff');
+}
+
+@layer base {
+	* {
+		@apply font-sans;
+	}
+
+	body {
+		@apply text-base/5 font-light;
+	}
+
+	h1,
+	.h1,
+	h2,
+	.h2,
+	h3,
+	.h3,
+	h4,
+	.h4,
+	h5,
+	.h5,
+	h6,
+	.h6,
+	.title-display {
+		@apply font-normal;
+	}
+	.title-display {
+		@apply text-10xl/18 font-serif tracking-wide;
+	}
+	h1,
+	.h1 {
+		@apply text-5xl/11;
+	}
+	h2,
+	.h2 {
+		@apply text-4xl/10;
+	}
+	h3,
+	.h3 {
+		@apply text-3xl/9;
+	}
+	h4,
+	.h4 {
+		@apply text-2xl/8;
+	}
+	h5,
+	.h5 {
+		@apply text-xl/7;
+	}
+	h6,
+	.h6 {
+		@apply text-lg/6;
+	}
+
+	p,
+	.paragraph {
+		@apply text-base/6;
+	}
+	a,
+	.link {
+		@apply font-medium;
+	}
+	blockquote,
+	q,
+	.quote {
+		@apply italic;
+	}
+	.small {
+		@apply text-sm/4;
+	}
+	.mini {
+		@apply text-xs/3;
+	}
+
+	*.text-focus {
+		@apply font-medium;
+	}
+	h1.text-focus,
+	.h1.text-focus,
+	h2.text-focus,
+	.h2.text-focus,
+	h3.text-focus,
+	.h3.text-focus,
+	h4.text-focus,
+	.h4.text-focus,
+	h5.text-focus,
+	.h5.text-focus,
+	h6.text-focus,
+	.h6.text-focus {
+		@apply font-semibold;
+	}
+	.title-display.text-focus {
+		@apply font-bold;
+	}
+	blockquote.text-focus,
+	q.text-focus,
+	.quote.text-focus {
+		@apply font-normal;
+	}
 }

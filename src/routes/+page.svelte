@@ -3,7 +3,9 @@
 	<meta name="description" content="Blog de Edgar Jaymez" />
 </svelte:head>
 
-<section class="w-screen h-screen flex flex-col justify-center items-center gap-8 bg-primary-500">
-	<h1 class="font-serif">Blog de Edgar Jaymez</h1>
-	<p class="font-sans">Welcome to my blog</p>
+<section
+	class="bg-primary-500 text-base-light flex h-screen w-screen flex-col items-center justify-center gap-8"
+>
+	<h1 class="title-display">Blog de Edgar Jaymez</h1>
+	<p class="">Welcome to my blog</p>
 </section>
