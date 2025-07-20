@@ -16,5 +16,6 @@
 </svelte:head>
 
 <section>
-	<h1>Blog de Edgar Jaymez</h1>
+	<h1 class="font-serif">Blog de Edgar Jaymez</h1>
+	<p class="font-sans">Welcome to my blog</p>
 </section>

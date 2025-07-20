@@ -1,1 +1,85 @@
 @import 'tailwindcss';
+
+@theme {
+	--font-sans:
+		'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	--font-serif: 'Space Grotesk', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+/* --- Font Declarations --- */
+/* Sans Family */
+@font-face {
+	font-family: 'Plus Jakarta Sans';
+	font-style: normal;
+	font-weight: 300;
+	font-display: swap;
+	src:
+		url('/fonts/sans/PlusJakartaSans-Light.woff2') format('woff2'),
+		url('/fonts/sans/PlusJakartaSans-Light.woff') format('woff');
+}
+@font-face {
+	font-family: 'Plus Jakarta Sans';
+	font-style: italic;
+	font-weight: 300;
+	font-display: swap;
+	src:
+		url('/fonts/sans/PlusJakartaSans-LightItalic.woff2') format('woff2'),
+		url('/fonts/sans/PlusJakartaSans-LightItalic.woff') format('woff');
+}
+@font-face {
+	font-family: 'Plus Jakarta Sans';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src:
+		url('/fonts/sans/PlusJakartaSans-Regular.woff2') format('woff2'),
+		url('/fonts/sans/PlusJakartaSans-Regular.woff') format('woff');
+}
+@font-face {
+	font-family: 'Plus Jakarta Sans';
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src:
+		url('/fonts/sans/PlusJakartaSans-Italic.woff2') format('woff2'),
+		url('/fonts/sans/PlusJakartaSans-Italic.woff') format('woff');
+}
+@font-face {
+	font-family: 'Plus Jakarta Sans';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src:
+		url('/fonts/sans/PlusJakartaSans-Medium.woff2') format('woff2'),
+		url('/fonts/sans/PlusJakartaSans-Medium.woff') format('woff');
+}
+@font-face {
+	font-family: 'Plus Jakarta Sans';
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src:
+		url('/fonts/sans/PlusJakartaSans-SemiBold.woff2') format('woff2'),
+		url('/fonts/sans/PlusJakartaSans-SemiBold.woff') format('woff');
+}
+
+/* Serif Family */
+@font-face {
+	font-family: 'Space Grotesk';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src:
+		url('/fonts/serif/SpaceGrotesk-Regular.woff2') format('woff2'),
+		url('/fonts/serif/SpaceGrotesk-Regular.woff') format('woff');
+}
+@font-face {
+	font-family: 'Space Grotesk';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src:
+		url('/fonts/serif/SpaceGrotesk-Bold.woff2') format('woff2'),
+		url('/fonts/serif/SpaceGrotesk-Bold.woff') format('woff');
+}
