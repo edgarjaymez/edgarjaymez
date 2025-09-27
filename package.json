@@ -33,6 +33,7 @@
 		"mdsvex": "0.12.6",
 		"prettier": "3.6.2",
 		"prettier-plugin-svelte": "3.4.0",
+		"prettier-plugin-tailwindcss": "0.6.14",
 		"svelte": "5.39.6",
 		"svelte-check": "4.3.2",
 		"tailwindcss": "4.1.13",
@@ -42,5 +43,11 @@
 		"vitest": "3.2.4"
 	},
 	"dependencies": {},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@tailwindcss/oxide",
+			"esbuild"
+		]
+	},
 	"packageManager": "pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a"
 }
