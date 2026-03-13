@@ -17,6 +17,9 @@ importers:
       '@astrojs/svelte':
         specifier: ^8.0.0
         version: 8.0.0(@types/node@24.12.0)(astro@6.0.4(@types/node@24.12.0)(rollup@4.59.0)(typescript@5.9.3))(svelte@5.53.11)(typescript@5.9.3)
+      '@edgarjaymez/grove':
+        specifier: 0.19.0-alpha.4
+        version: 0.19.0-alpha.4(svelte@5.53.11)
       astro:
         specifier: ^6.0.0-beta.6
         version: 6.0.4(@types/node@24.12.0)(rollup@4.59.0)(typescript@5.9.3)
@@ -89,6 +92,11 @@ packages:
 
   '@clack/prompts@1.1.0':
     resolution: {integrity: sha512-pkqbPGtohJAvm4Dphs2M8xE29ggupihHdy1x84HNojZuMtFsHiUlRvqD24tM2+XmI+61LlfNceM3Wr7U5QES5g==}
+
+  '@edgarjaymez/grove@0.19.0-alpha.4':
+    resolution: {integrity: sha512-5JN5GCQezq6G/ncO7whyOnyS7IXLyhHnpksdEkpTbAO5mYw12d/hhJjGn5VyWl88OT20kcMDfSCrapuscCIpiQ==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   '@emnapi/runtime@1.9.0':
     resolution: {integrity: sha512-QN75eB0IH2ywSpRpNddCRfQIhmJYBCJ1x5Lb3IscKAL8bMnVAKnRg8dCoXbHzVLLH7P38N2Z3mtulB7W0J0FKw==}
@@ -1660,6 +1668,10 @@ snapshots:
     dependencies:
       '@clack/core': 1.1.0
       sisteransi: 1.0.5
+
+  '@edgarjaymez/grove@0.19.0-alpha.4(svelte@5.53.11)':
+    dependencies:
+      svelte: 5.53.11
 
   '@emnapi/runtime@1.9.0':
     dependencies:
