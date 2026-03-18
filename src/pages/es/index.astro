@@ -1,7 +1,9 @@
 ---
-import { SITE_DESCRIPTION_ES, SITE_TITLE_ES } from "../../consts";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-
-
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'es' } },
+  ];
+}
 ---
-<BaseLayout title={SITE_TITLE_ES} description={SITE_DESCRIPTION_ES} />
+<h1>Home</h1>
