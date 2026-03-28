@@ -15,5 +15,5 @@ const page = Astro.props;
 const { Content } = await render(page);
 ---
 <h1>{page.data.title}</h1>
-<p>by {page.data.author} • {page.data.date.toLocaleDateString(lang)}</p>
+<p>by {page.data.author} - {page.data.date.toLocaleDateString(lang)}</p>
 <Content />
