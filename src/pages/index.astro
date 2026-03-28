@@ -1,4 +1,11 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
-<h1>Home</h1>
+
+<BaseLayout>
+  <h1>{t('nav.home')}</h1>
+</BaseLayout>

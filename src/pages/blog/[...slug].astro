@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   const pages = await getCollection('blog');
@@ -14,6 +15,9 @@ const { lang } = Astro.params;
 const page = Astro.props;
 const { Content } = await render(page);
 ---
-<h1>{page.data.title}</h1>
-<p>by {page.data.author} - {page.data.date.toLocaleDateString(lang)}</p>
-<Content />
+
+<BaseLayout>
+  <h1>{page.data.title}</h1>
+  <p>by {page.data.author} - {page.data.date.toLocaleDateString(lang)}</p>
+  <Content />
+</BaseLayout>
