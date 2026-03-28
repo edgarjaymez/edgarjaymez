@@ -4,15 +4,13 @@ export const languages = {
 };
 
 export const defaultLang = 'en';
+export const showDefaultLang = false;
 
 export const ui = {
   en: {
-    'nav.home': 'Home',
-    'nav.about': 'About',
-    'nav.twitter': 'Twitter',
+    'hero.blogCTA': 'Visit my blog in your language',
   },
   es: {
-    'nav.home': 'Inicio',
-    'nav.about': 'Acerca de',
+    'hero.blogCTA': 'Visita mi blog en tu idioma',
   },
 } as const;

@@ -1,12 +1,19 @@
 ---
-import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { languages } from "../../i18n/ui";
+import { getLangFromUrl, useTranslatedPath, useTranslations } from "../../i18n/utils";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
 ---
 
 <BaseLayout>
-  <h1>{t('nav.home')}</h1>
+  <h1>{t('hero.blogCTA')}</h1>
+
+  {Object.entries(languages).map(([lang, label]) => (
+    <li>
+      <a href={translatePath("/blog/hola-mundo", lang)}>{label}</a>
+    </li>
+  ))}
 </BaseLayout>
