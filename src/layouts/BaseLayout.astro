@@ -1,9 +1,12 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
 
 const { title, description } = Astro.props;
 ---
-<html lang="en">
+<html lang={lang}>
   <head>
     <BaseHead title={title} description={description}/>
 
