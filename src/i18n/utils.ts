@@ -24,3 +24,23 @@ export function useTranslatedPath(lang: keyof typeof ui) {
     return !showDefaultLang && l === defaultLang ? translatedPath : `/${l}${translatedPath}`
   }
 }
+
+export function getRouteFromUrl(url: URL): string | undefined {
+  const parts = url.pathname.split('/');
+  const path = parts.pop() || parts.pop();
+
+  if (!path) {
+    return undefined;
+  }
+
+  const currentLang = getLangFromUrl(url);
+  const currentRoutes = routes[currentLang as keyof typeof routes];
+
+  if (!currentRoutes) {
+    return undefined;
+  }
+
+  // TODO: Refactor to remove assertion
+  return getKeyByValue(currentRoutes as Record<string, string>, path);
+}
+
