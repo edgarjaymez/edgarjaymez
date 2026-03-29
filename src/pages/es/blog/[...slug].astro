@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getRouteFromUrl } from '../../../i18n/utils';
 
 export async function getStaticPaths() {
   const pages = await getCollection('blog');
@@ -14,6 +15,8 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const page = Astro.props;
 const { Content } = await render(page);
+
+getRouteFromUrl(Astro.url)
 ---
 
 <BaseLayout>
