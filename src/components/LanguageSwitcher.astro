@@ -1,0 +1,16 @@
+---
+import { languages } from '../i18n/ui';
+import { getRouteFromUrl, useTranslatedPath } from '../i18n/utils';
+
+const route = getRouteFromUrl(Astro.url);
+---
+<ul>
+  {languages.map((lang) => {
+    const translatePath = useTranslatedPath(lang.code);
+    return (
+      <li>
+        <a href={translatePath(`/${route ? route : ''}`)}>{lang.label}</a>
+      </li>
+    )
+  })}
+</ul>
