@@ -1,5 +1,9 @@
 ---
-import { getLangFromUrl, useTranslatedPath, useTranslations } from "../../i18n/utils";
+import {
+  getLangFromUrl,
+  useTranslatedPath,
+  useTranslations,
+} from "../../i18n/utils";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 const lang = getLangFromUrl(Astro.url);
@@ -8,5 +12,5 @@ const translatePath = useTranslatedPath(lang);
 ---
 
 <BaseLayout>
-  <h1>{t('hero.blogCTA')}</h1>
+  <h1>{t("hero.blogCTA")}</h1>
 </BaseLayout>

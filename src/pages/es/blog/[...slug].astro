@@ -1,14 +1,14 @@
 ---
-import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getRouteFromUrl } from '../../../i18n/utils';
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getRouteFromUrl } from "../../../i18n/utils";
 
 export async function getStaticPaths() {
-  const pages = await getCollection('blog');
+  const pages = await getCollection("blog");
 
-  return pages.map(page => {
-    const [lang, ...slug] = page.id.split('/');
-    return { params: { lang, slug: slug.join('/') || undefined }, props: page };
+  return pages.map((page) => {
+    const [lang, ...slug] = page.id.split("/");
+    return { params: { lang, slug: slug.join("/") || undefined }, props: page };
   });
 }
 
@@ -16,7 +16,7 @@ const { lang } = Astro.params;
 const page = Astro.props;
 const { Content } = await render(page);
 
-getRouteFromUrl(Astro.url)
+getRouteFromUrl(Astro.url);
 ---
 
 <BaseLayout>
