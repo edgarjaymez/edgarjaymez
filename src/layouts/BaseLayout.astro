@@ -1,26 +1,25 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
-import { getLangFromUrl } from '../i18n/utils';
+import { getLangFromUrl } from "../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
 
 const { title, description } = Astro.props;
 ---
+
 <html lang={lang}>
   <head>
-    <BaseHead title={title} description={description}/>
+    <BaseHead title={title} description={description} />
 
-    <slot name="head"></slot>
+    <slot name="head" />
   </head>
 
   <body>
     <slot />
 
     <LanguageSwitcher />
-  </body>
-  
-  <style>
+  </body><style>
     h1 {
       font-size: 2rem;
     }
