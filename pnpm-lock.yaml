@@ -21,8 +21,8 @@ importers:
         specifier: 8.0.1
         version: 8.0.1(@types/node@24.12.4)(astro@6.0.5(@types/node@24.12.4)(rollup@4.60.4)(typescript@5.9.3))(svelte@5.53.11)(typescript@5.9.3)
       '@edgarjaymez/grove':
-        specifier: 0.28.1
-        version: 0.28.1(lit@3.3.3)
+        specifier: file:../grove
+        version: file:../grove(lit@3.3.3)
       astro:
         specifier: 6.0.5
         version: 6.0.5(@types/node@24.12.4)(rollup@4.60.4)(typescript@5.9.3)
@@ -120,8 +120,8 @@ packages:
     resolution: {integrity: sha512-wKh+wTjmrUoUdkZg8KpJO5X+p9PWV+KE9mePseq9UYWkukgTKsGS47RRL2HstwVcvDQH+PenrPJWII8+MfiiyA==}
     engines: {node: '>= 20.12.0'}
 
-  '@edgarjaymez/grove@0.28.1':
-    resolution: {integrity: sha512-18HpHBF9L5ua5SuEGswzyg5gx/ZzY/m5SMN2zq+vWLoP/uVMPTo9+dIgqSUOUa61gk/VevuxhPS3grwAi3pXBw==}
+  '@edgarjaymez/grove@file:../grove':
+    resolution: {directory: ../grove, type: directory}
     engines: {node: '>=20'}
     peerDependencies:
       lit: ^3.0.0
@@ -1845,7 +1845,7 @@ snapshots:
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 
-  '@edgarjaymez/grove@0.28.1(lit@3.3.3)':
+  '@edgarjaymez/grove@file:../grove(lit@3.3.3)':
     dependencies:
       lit: 3.3.3
 
