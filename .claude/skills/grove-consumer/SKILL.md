@@ -1,10 +1,12 @@
 ---
+name: grove-consumer
 description: Run and verify the edgarjaymez Astro portfolio (dev server or static prod build)
 ---
 
 # Run — edgarjaymez Astro Portfolio
 
 Astro 6 + `@astrojs/lit` + Grove design system (`@edgarjaymez/grove`). Two distinct modes:
+
 - **Dev** — Vite dev server with HMR; port 4321 (falls back to 4322 if in use).
 - **Prod preview** — static build served locally; this is what Vercel deploys. Always use this to verify changes before pushing.
 
@@ -75,12 +77,12 @@ If `gv-isotype` or `gv-button` shows `BROKEN(empty tag)`, see gotchas below.
 
 ## Routes
 
-| URL | File |
-|-----|------|
-| `/` | `src/pages/index.astro` |
-| `/contact` | `src/pages/contact.astro` |
-| `/es/` | `src/pages/es/index.astro` |
-| `/es/contacto` | `src/pages/es/contacto.astro` |
+| URL               | File                                |
+| ----------------- | ----------------------------------- |
+| `/`               | `src/pages/index.astro`             |
+| `/contact`        | `src/pages/contact.astro`           |
+| `/es/`            | `src/pages/es/index.astro`          |
+| `/es/contacto`    | `src/pages/es/contacto.astro`       |
 | `/es/blog/[slug]` | `src/pages/es/blog/[...slug].astro` |
 
 ## Gotchas discovered in development
@@ -90,11 +92,13 @@ If `gv-isotype` or `gv-button` shows `BROKEN(empty tag)`, see gotchas below.
 **Root cause**: `import '@edgarjaymez/grove'` in Astro frontmatter is server-side only — Vite does NOT bundle it for the browser. In dev, Vite serves all modules on demand so it appears to work. In the static build (and on Vercel), the browser never receives the Grove JavaScript.
 
 **Fix already in place**: `src/layouts/BaseLayout.astro` includes:
+
 ```astro
 <script>
   import "@edgarjaymez/grove";
 </script>
 ```
+
 This `<script>` (without `is:inline`) is bundled by Vite for the client.
 
 **Why the script was previously tree-shaken**: Grove's `package.json` had `"sideEffects": ["**/*.css"]` — JS was absent, so Vite eliminated `import '@edgarjaymez/grove'` as dead code. Fixed in `grove/package.json` by adding `"**/*.js"`.
@@ -104,25 +108,25 @@ This `<script>` (without `is:inline`) is bundled by Vite for the client.
 ### Two imports required — frontmatter AND script tag
 
 `BaseLayout.astro` correctly has both:
+
 ```astro
 ---
-import "@edgarjaymez/grove";   // SSR: tells @astrojs/lit to render DSdDOM at build time
+import "@edgarjaymez/grove"; // SSR: tells @astrojs/lit to render DSdDOM at build time
 ---
+
 <head>
   <script>
-    import "@edgarjaymez/grove";  // Client: Vite bundles this for the browser
+    import "@edgarjaymez/grove"; // Client: Vite bundles this for the browser
   </script>
 </head>
 ```
+
 Removing either breaks a different environment.
 
 ### Spanish contact route is `/es/contacto`, not `/es/contact`
 
 The file is `src/pages/es/contacto.astro` (not `contact.astro`). Route translation is defined in `src/i18n/ui.ts` under `routes.es.contact = "contacto"`. If you rename it back, the LanguageSwitcher will link to a 404.
 
-### Grove is a local file dependency during development
+### Grove must be a versioned npm dependency, not a local file
 
-`package.json` uses `"@edgarjaymez/grove": "file:../grove"` to point at the local build. Before shipping:
-1. Publish Grove to npm with a bumped version
-2. Update `package.json` back to `"@edgarjaymez/grove": "X.Y.Z"`
-3. `pnpm install && pnpm build`
+`package.json` uses `"@edgarjaymez/grove": "0.28.2"` (versioned). If you ever switch back to `"file:../grove"` for local dev, Vercel will fail with `ENOENT: no such file or directory, scandir '/vercel/grove'` because the local path doesn't exist on their build servers. Always revert to a version number before pushing.
