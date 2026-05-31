@@ -13,6 +13,9 @@ const { title, description } = Astro.props;
   <head>
     <BaseHead title={title} description={description} />
     <slot name="head" />
+    <script>
+      import "@edgarjaymez/grove";
+    </script>
   </head>
   <body>
     <header>
