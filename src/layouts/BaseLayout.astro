@@ -1,4 +1,5 @@
 ---
+import "@edgarjaymez/grove";
 import BaseHead from "../components/BaseHead.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import { getLangFromUrl } from "../i18n/utils";
@@ -11,17 +12,15 @@ const { title, description } = Astro.props;
 <html lang={lang}>
   <head>
     <BaseHead title={title} description={description} />
-
     <slot name="head" />
   </head>
-
   <body>
-    <slot />
-
-    <LanguageSwitcher />
-  </body><style>
-    h1 {
-      font-size: 2rem;
-    }
-  </style>
+    <header>
+      <gv-isotype size={40} color="brand" tone="light"></gv-isotype>
+      <LanguageSwitcher />
+    </header>
+    <main>
+      <slot />
+    </main>
+  </body>
 </html>
