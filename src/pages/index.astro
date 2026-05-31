@@ -1,0 +1,19 @@
+---
+import { getLangFromUrl, useTranslatedPath, useTranslations } from "../i18n/utils";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+---
+
+<BaseLayout title={t("hero.title")} description={t("hero.description")}>
+  <section>
+    <h1>{t("hero.title")}</h1>
+    <p>{t("hero.role")}</p>
+    <p>{t("hero.description")}</p>
+    <a href={translatePath("/contact")}>
+      <gv-button text={t("hero.cta")} variant="filled" color="accent" size="lg"></gv-button>
+    </a>
+  </section>
+</BaseLayout>

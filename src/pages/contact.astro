@@ -1,0 +1,35 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t("contact.title")} description={t("hero.description")}>
+  <section>
+    <h1>{t("contact.title")}</h1>
+    <form>
+      <gv-text-input
+        name="name"
+        input-id="name"
+        placeholder={t("contact.name")}
+        color="brand"
+      ></gv-text-input>
+      <gv-text-input
+        name="email"
+        input-id="email"
+        type="email"
+        placeholder={t("contact.email")}
+        color="brand"
+      ></gv-text-input>
+      <gv-button
+        text={t("contact.submit")}
+        variant="filled"
+        color="accent"
+        size="md"
+        type="submit"
+      ></gv-button>
+    </form>
+  </section>
+</BaseLayout>
