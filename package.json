@@ -16,7 +16,7 @@
     "@astrojs/markdoc": "1.0.0",
     "@astrojs/sitemap": "3.7.1",
     "@astrojs/svelte": "8.0.1",
-    "@edgarjaymez/grove": "file:../grove",
+    "@edgarjaymez/grove": "0.28.2",
     "astro": "6.0.5",
     "gsap": "3.14.2",
     "lit": "^3.3.3",
