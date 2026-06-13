@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@astrojs/cloudflare':
-        specifier: 13.7.0
+        specifier: ^13.7.0
         version: 13.7.0(@types/node@24.13.2)(astro@6.4.6(@types/node@24.13.2)(rollup@4.61.1))(workerd@1.20260611.1)(wrangler@4.100.0)
       '@astrojs/markdoc':
         specifier: 1.0.6
@@ -18,8 +18,8 @@ importers:
         specifier: 3.7.3
         version: 3.7.3
       '@edgarjaymez/grove':
-        specifier: 0.34.0
-        version: 0.34.0(lit@3.3.3)
+        specifier: 0.35.1
+        version: 0.35.1(lit@3.3.3)
       astro:
         specifier: 6.4.6
         version: 6.4.6(@types/node@24.13.2)(rollup@4.61.1)
@@ -166,8 +166,8 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@edgarjaymez/grove@0.34.0':
-    resolution: {integrity: sha512-fdSOsK3WUl5UyHlraBCuzpl+q8auImBTQ3dwFMOsnAF+xeyAJV80MV48kRPGhwqhBLjih5o8sTf805gBaK70DQ==}
+  '@edgarjaymez/grove@0.35.1':
+    resolution: {integrity: sha512-H0mxotbV2tNNsXDA7OUfxkleaMooywe4EaDe8oallP8ItRFCetO1CxXqdChkMoAMLHSsbSxtWPYHFSzybwNi1w==}
     engines: {node: '>=20'}
     peerDependencies:
       '@phosphor-icons/webcomponents': ^2.1.5
@@ -2017,7 +2017,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@edgarjaymez/grove@0.34.0(lit@3.3.3)':
+  '@edgarjaymez/grove@0.35.1(lit@3.3.3)':
     dependencies:
       lit: 3.3.3
 
