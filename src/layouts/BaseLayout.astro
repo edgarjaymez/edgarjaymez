@@ -19,7 +19,7 @@ const { title, description } = Astro.props;
   <body>
     <header>
       <gv-isotype size={40} color="brand" tone="light"></gv-isotype>
-      <LanguageSwitcher />
+      <LanguageSwitcher route={lang} />
     </header>
     <main>
       <slot />
