@@ -8,9 +8,10 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "pnpm run build && wrangler dev",
     "astro": "astro",
-    "generate-types": "wrangler types"
+    "generate-types": "wrangler types",
+    "deploy": "pnpm run build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.7.0",
@@ -20,12 +21,14 @@
     "astro": "6.4.6",
     "gsap": "3.15.0",
     "lit": "3.3.3",
+    "typescript": "6.0.3"
     "typescript": "6.0.3",
-    "wrangler": "^4.100.0"
+    "wrangler": "4.100.0"
   },
   "devDependencies": {
     "prettier": "3.8.4",
-    "prettier-plugin-astro": "0.14.1"
+    "prettier-plugin-astro": "0.14.1",
+    "wrangler": "4.100.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
