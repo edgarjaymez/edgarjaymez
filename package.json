@@ -8,10 +8,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "pnpm run build && wrangler dev",
+    "preview": "pnpm run build",
     "astro": "astro",
-    "generate-types": "wrangler types",
-    "deploy": "pnpm run build && wrangler deploy"
+    "deploy": "pnpm run build"
   },
   "dependencies": {
     "@astrojs/markdoc": "1.0.6",
