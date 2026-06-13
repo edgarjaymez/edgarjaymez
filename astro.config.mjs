@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-import lit from "@astrojs/lit";
 import sitemap from "@astrojs/sitemap";
 
 import markdoc from "@astrojs/markdoc";
