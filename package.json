@@ -8,9 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "pnpm run build",
-    "astro": "astro",
-    "deploy": "pnpm run build"
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/markdoc": "1.0.6",
