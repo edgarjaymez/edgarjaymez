@@ -17,7 +17,9 @@ pnpm-workspace.yaml
 
 # environment variables
 .env
-.env.production
+.env.*
+# .env.example is the committed template — it documents the schema, holds no values
+!.env.example
 
 # macOS-specific files
 .DS_Store
@@ -30,3 +32,5 @@ MEMORY.md
 AGENTS.md
 CLAUDE.md
 .claude/**
+.agents/
+skills-lock.json
