@@ -15,8 +15,8 @@ importers:
         specifier: 3.7.4
         version: 3.7.4
       '@edgarjaymez/grove':
-        specifier: 0.35.1
-        version: 0.35.1(lit@3.3.3)
+        specifier: 0.44.0
+        version: 0.44.0(lit@3.3.3)
       astro:
         specifier: 7.3.3
         version: 7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.2)
@@ -214,8 +214,8 @@ packages:
     resolution: {integrity: sha512-zccHj2z2oCCO4yrDiRSlFOxWerGqRiysP7a5jPK6uoI9URKAquwY42Dd/iUP8JWHxEzdRe4TlbvZCo8z1/mhrw==}
     engines: {node: '>= 20.12.0'}
 
-  '@edgarjaymez/grove@0.35.1':
-    resolution: {integrity: sha512-H0mxotbV2tNNsXDA7OUfxkleaMooywe4EaDe8oallP8ItRFCetO1CxXqdChkMoAMLHSsbSxtWPYHFSzybwNi1w==}
+  '@edgarjaymez/grove@0.44.0':
+    resolution: {integrity: sha512-FuB2Mg8cg/Ck/Av8hdx57eAkBMwmyqe+F9DZmaMmfD30XOi5Hszde0zFzX4y/1o8q7KFOWgH0PjXsRtsn1yUpA==}
     engines: {node: '>=20'}
     peerDependencies:
       '@phosphor-icons/webcomponents': ^2.1.5
@@ -1719,7 +1719,7 @@ snapshots:
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 
-  '@edgarjaymez/grove@0.35.1(lit@3.3.3)':
+  '@edgarjaymez/grove@0.44.0(lit@3.3.3)':
     dependencies:
       lit: 3.3.3
 

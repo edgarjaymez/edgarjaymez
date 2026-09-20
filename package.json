@@ -14,7 +14,7 @@
   "dependencies": {
     "@astrojs/markdoc": "2.0.9",
     "@astrojs/sitemap": "3.7.4",
-    "@edgarjaymez/grove": "0.35.1",
+    "@edgarjaymez/grove": "0.44.0",
     "astro": "7.3.3",
     "gsap": "3.15.0",
     "lit": "3.3.3",
