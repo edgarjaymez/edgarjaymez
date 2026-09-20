@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@astrojs/markdoc": "2.0.9",
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "3.7.4",
     "@edgarjaymez/grove": "0.44.0",
     "@phosphor-icons/webcomponents": "^2.1.5",

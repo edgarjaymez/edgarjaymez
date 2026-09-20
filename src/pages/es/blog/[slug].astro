@@ -1,0 +1,12 @@
+---
+import BlogPost from "../../../views/BlogPost.astro";
+import { entryPaths } from "../../../lib/content";
+
+export async function getStaticPaths() {
+  return entryPaths("blog", "es");
+}
+
+const { entry, slugs } = Astro.props;
+---
+
+<BlogPost lang="es" entry={entry} slugs={slugs} />

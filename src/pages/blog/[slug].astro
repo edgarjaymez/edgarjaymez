@@ -1,0 +1,13 @@
+---
+import BlogPost from "../../views/BlogPost.astro";
+import { entryPaths, reportTranslationParity } from "../../lib/content";
+
+export async function getStaticPaths() {
+  await reportTranslationParity();
+  return entryPaths("blog", "en");
+}
+
+const { entry, slugs } = Astro.props;
+---
+
+<BlogPost lang="en" entry={entry} slugs={slugs} />

@@ -10,6 +10,7 @@ import "@edgarjaymez/grove/grove.css";
 import type { ImageMetadata } from "astro";
 
 import FallbackImage from "../assets/fallback_thumbnail.png";
+import { SITE_TITLE, SITE_TITLE_ES } from "../consts";
 import {
   defaultLocale,
   getLang,
@@ -67,11 +68,21 @@ const xDefault = alternates.find((a) => a.lang === defaultLocale);
 <meta name="generator" content={Astro.generator} />
 
 <!--
-  No RSS <link> yet. The previous one advertised /rss.xml on every page while no such route existed,
-  so every feed reader that followed it got a 404. The per-locale feeds land with the blog routes;
-  the link comes back then, pointing at something real. src/consts.ts is unreferenced until then —
-  its titles are what the feeds will use.
+  Per-locale feed. The previous version advertised a single /rss.xml on every page while no such
+  route existed, so every reader that followed it got a 404 — and would have subscribed a Spanish
+  reader to English posts had it worked. Each locale now points at its own feed.
 -->
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={lang === "es" ? SITE_TITLE_ES : SITE_TITLE}
+  href={
+    new URL(
+      lang === defaultLocale ? "/rss.xml" : `/${lang}/rss.xml`,
+      Astro.site,
+    )
+  }
+/>
 
 <!-- Fonts are imported through Grove at module scope, so no preload tags are needed here. -->
 
