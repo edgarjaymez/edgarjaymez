@@ -1,0 +1,13 @@
+---
+import LabEntry from "../../views/LabEntry.astro";
+import { entryPaths } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const paths = await entryPaths("lab", "en");
+  return paths.filter((p) => (p.props.entry.body ?? "").trim().length > 0);
+}
+
+const { entry, slugs } = Astro.props;
+---
+
+<LabEntry lang="en" entry={entry} slugs={slugs} />
