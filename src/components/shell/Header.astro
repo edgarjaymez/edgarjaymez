@@ -1,0 +1,57 @@
+---
+/**
+ * The site header: identity, primary navigation, language switcher.
+ *
+ * Nav links go through NavItem so each one is a real anchor in the server HTML. `home` is excluded
+ * from the list because the isotype already links there.
+ */
+import LanguageSwitcher from "../LanguageSwitcher.astro";
+import NavItem from "../grove/NavItem.astro";
+import {
+  getLang,
+  pathFor,
+  type RouteDescriptor,
+  type RouteKey,
+} from "../../i18n/routes";
+import { useTranslations } from "../../i18n/utils";
+
+interface Props {
+  route: RouteDescriptor;
+}
+
+const { route } = Astro.props;
+const lang = getLang(Astro.url);
+const t = useTranslations(lang);
+
+/** Icon names here must stay in sync with the imports in BaseLayout — check-dist verifies that. */
+const items: Array<{ key: RouteKey; icon: string }> = [
+  { key: "work", icon: "briefcase" },
+  { key: "lab", icon: "flask" },
+  { key: "blog", icon: "fire" },
+  { key: "resume", icon: "file-text" },
+  { key: "contact", icon: "envelope" },
+];
+---
+
+<header>
+  <a href={pathFor(lang, "home")} aria-label={t("nav.home")}>
+    <gv-isotype size="40" color="brand" tone="light"></gv-isotype>
+  </a>
+
+  <nav aria-label={t("nav.home")}>
+    <ul>
+      {items.map((item) => (
+        <li>
+          <NavItem
+            href={pathFor(lang, item.key)}
+            label={t(`nav.${item.key}` as Parameters<typeof t>[0])}
+            icon={item.icon}
+            isActive={item.key === route.key}
+          />
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <LanguageSwitcher route={route} />
+</header>
