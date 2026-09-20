@@ -1,0 +1,35 @@
+{
+  "basics": {
+    "name": "Edgar Jaymez",
+    "label": "Design Technologist",
+    "url": "https://edgarjaymez.com",
+    "summary": "Building scalable design systems that work in Figma and in production; from token architecture to shipped Web Components.",
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "edgarjaymez",
+        "url": "https://github.com/edgarjaymez"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Placeholder",
+      "position": "Design Technologist",
+      "startDate": "2026-01",
+      "summary": "Seed fixture. Replace with the real history, and decide which personal fields are public.",
+      "highlights": ["Built and shipped the Grove design system."]
+    }
+  ],
+  "education": [],
+  "skills": [
+    {
+      "name": "Design systems",
+      "keywords": ["Tokens", "Web Components", "Figma"]
+    }
+  ],
+  "languages": [
+    { "language": "English", "fluency": "Fluent" },
+    { "language": "Spanish", "fluency": "Native" }
+  ]
+}

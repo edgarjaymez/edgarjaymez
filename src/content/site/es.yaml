@@ -1,0 +1,44 @@
+# Copia del sitio por idioma. Todo lo que lee un visitante que no es una entrada vive aquí.
+# NOTA: traducción preliminar — pendiente de revisión del Warden (speak-to-users).
+profile:
+  name: Edgar Jaymez
+  role: Tecnólogo de Diseño
+  summary: >-
+    Construyo sistemas de diseño escalables que funcionan en Figma y en producción;
+    desde la arquitectura de tokens hasta Web Components publicados.
+
+availability:
+  open: true
+  note: Disponible para trabajo en sistemas de diseño.
+
+links:
+  - label: GitHub
+    href: https://github.com/edgarjaymez
+
+principles:
+  - title: Una fuente, dos públicos
+    body: Un token debe significar lo mismo para quien diseña y para el build.
+  - title: Estructura antes que estilo
+    body: Una página debe leerse bien antes de parecerse a algo.
+  - title: Publicar lo aburrido
+    body: La accesibilidad y el i18n sostienen la casa; no son adorno.
+
+nowCooking: Un extractor de paleta OKLCH, para poder dibujar con colores reales de Grove.
+
+scenes:
+  - key: entrance
+    title: La Entrada
+    intro: Encuentras un sendero, pintado de un color que aún no has visto.
+  - key: commons
+    eyebrow: El Claro Común
+    title: El Claro Común
+    intro: La copa se cierra arriba. Tres tocones, pulidos por el uso.
+  - key: quarters
+    title: Los Aposentos
+    intro: Puertas en los troncos grandes. Cada una abre a un trabajo.
+  - key: kitchen
+    title: La Cocina
+    intro: Algo se cuece. No todo se servirá.
+  - key: fire
+    title: La Fogata
+    intro: Anillos en la madera, uno por cada año de contar historias.
