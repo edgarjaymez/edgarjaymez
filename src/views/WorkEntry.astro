@@ -1,0 +1,70 @@
+---
+import { render } from "astro:content";
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatDate, isoDate } from "../lib/format";
+import type { AnyEntry } from "../lib/content";
+import type { Locale } from "../i18n/routes";
+
+interface Props {
+  lang: Locale;
+  entry: AnyEntry;
+  slugs: Partial<Record<Locale, string>>;
+}
+
+const { lang, entry, slugs } = Astro.props;
+const { Content } = await render(entry);
+const data = entry.data as {
+  title: string;
+  description: string;
+  date: Date;
+  role: string;
+  outcome: string;
+  period: string;
+  stack: string[];
+  links: Array<{ label: string; href: string }>;
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  route={{ key: "work", slugs }}
+>
+  <article>
+    <header>
+      <h1>{data.title}</h1>
+      <dl>
+        <dt>Role</dt>
+        <dd>{data.role}</dd>
+        <dt>Outcome</dt>
+        <dd>{data.outcome}</dd>
+        <dt>Period</dt>
+        <dd>
+          <time datetime={isoDate(data.date)}>{data.period}</time>
+        </dd>
+      </dl>
+      {data.stack.length > 0 && (
+        <ul>
+          {data.stack.map((s) => (
+            <li>{s}</li>
+          ))}
+        </ul>
+      )}
+    </header>
+    <Content />
+    {data.links.length > 0 && (
+      <footer>
+        <ul>
+          {data.links.map((l) => (
+            <li>
+              <a href={l.href} rel="noopener">
+                {l.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </footer>
+    )}
+  </article>
+</BaseLayout>
