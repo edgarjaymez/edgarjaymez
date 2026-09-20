@@ -1,27 +1,54 @@
 ---
+/**
+ * STOPGAP. This route is replaced by proper per-locale blog routes in the blog branch.
+ *
+ * Two known faults, kept visible rather than half-fixed here, because fixing them properly means
+ * building the real routes:
+ *
+ * 1. It globs the **whole** `blog` collection, so the English post renders under `/es/blog/`.
+ * 2. Its `getStaticPaths` returns a `lang` param, but the file path has no `[lang]` segment — so
+ *    `Astro.params.lang` was always `undefined`. That is what printed `undefined` in the build log
+ *    and what made the post date format against an undefined locale. The locale now comes from the
+ *    entry id, which actually carries it.
+ */
 import { getCollection, render } from "astro:content";
+
+import { localeMeta, type Locale } from "../../../i18n/routes";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
   const pages = await getCollection("blog");
 
   return pages.map((page) => {
-    const [lang, ...slug] = page.id.split("/");
-    return { params: { lang, slug: slug.join("/") || undefined }, props: page };
+    const [, ...slug] = page.id.split("/");
+    return { params: { slug: slug.join("/") || undefined }, props: page };
   });
 }
 
-const { lang, slug } = Astro.params;
 const page = Astro.props;
-const { Content } = await render(page);
+const { slug } = Astro.params;
 
-console.log(lang);
+// The entry id is `<locale>/<basename>`, so the locale is knowable here even though the route
+// itself has no locale segment.
+const [entryLocale] = page.id.split("/");
+const lang = (entryLocale in localeMeta ? entryLocale : "en") as Locale;
+
+const { Content } = await render(page);
 ---
 
-<BaseLayout>
-  <h1>{page.data.title}</h1>
-  <p>
-    by {page.data.author} - {page.data.date.toLocaleDateString(lang)}
-  </p>
-  <Content />
+<BaseLayout
+  title={page.data.title}
+  description={page.data.title}
+  route={{ key: "blog", slugs: { [lang]: slug } }}
+>
+  <article>
+    <h1>{page.data.title}</h1>
+    <p>
+      <span>{page.data.author}</span>
+      <time datetime={page.data.date.toISOString()}>
+        {page.data.date.toLocaleDateString(localeMeta[lang].htmlLang)}
+      </time>
+    </p>
+    <Content />
+  </article>
 </BaseLayout>

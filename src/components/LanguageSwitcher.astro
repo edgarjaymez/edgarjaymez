@@ -1,17 +1,48 @@
 ---
-import { languages } from "../i18n/ui";
-import { getRouteFromUrl, useTranslatedPath } from "../i18n/utils";
+/**
+ * The language switcher.
+ *
+ * Stays plain `<a>` rather than `gv-menu-item`: the anchor needs `hreflang` and `lang`, and
+ * `gv-menu-item` forwards neither, so a Grove element here would lose the two attributes that tell
+ * a screen reader the link text is in another language.
+ *
+ * `alternatesFor` guarantees a destination for every locale, so this never dead-ends. When an entry
+ * has no translation the link falls back to that section's index, and `aria-current` marks the page
+ * you are already on.
+ */
+import {
+  alternatesFor,
+  getLang,
+  localeMeta,
+  type RouteDescriptor,
+} from "../i18n/routes";
+import { useTranslations } from "../i18n/utils";
 
-const route = getRouteFromUrl(Astro.url);
+interface Props {
+  route: RouteDescriptor;
+}
+
+const { route } = Astro.props;
+
+const current = getLang(Astro.url);
+const t = useTranslations(current);
+const alternates = alternatesFor(route);
 ---
 
-<ul>
-  {languages.map((lang) => {
-    const translatePath = useTranslatedPath(lang.code);
-    return (
+<nav aria-label={t("nav.language")}>
+  <ul>
+    {alternates.map((alt) => (
       <li>
-        <a href={translatePath(`/${route ? route : ""}`)}>{lang.label}</a>
+        <a
+          href={alt.href}
+          hreflang={localeMeta[alt.lang].hreflang}
+          lang={localeMeta[alt.lang].htmlLang}
+          aria-current={alt.lang === current ? "page" : undefined}
+          data-exact={alt.exact ? "true" : "false"}
+        >
+          {alt.label}
+        </a>
       </li>
-    );
-  })}
-</ul>
+    ))}
+  </ul>
+</nav>

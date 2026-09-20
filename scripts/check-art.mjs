@@ -30,7 +30,6 @@ import {
   BUDGETS,
   EXPORT_SETTINGS,
   GEOMETRY,
-  PLANES,
   SERIES_PATTERN,
   allPlaneKeys,
   expectedHeight,
