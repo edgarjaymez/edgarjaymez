@@ -27,7 +27,9 @@ export function getTranslatedSlug(
   targetLang: keyof typeof routes,
 ): string | undefined {
   const sourceRoutes = routes[sourceLang] as Record<string, { slug: string }>;
-  const routeKey = Object.keys(sourceRoutes).find((key) => sourceRoutes[key].slug === slug);
+  const routeKey = Object.keys(sourceRoutes).find(
+    (key) => sourceRoutes[key].slug === slug,
+  );
   if (!routeKey) return undefined;
   const targetRoutes = routes[targetLang] as Record<string, { slug: string }>;
   return targetRoutes[routeKey]?.slug;
