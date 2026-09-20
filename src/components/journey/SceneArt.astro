@@ -1,0 +1,78 @@
+---
+/**
+ * SceneArt — the three parallax plane wrappers for one scene.
+ *
+ * Structure only. This component ships no CSS, no transforms and no motion; it lays down the DOM
+ * and the data attributes the styled phase will hook, and inlines whatever art exists.
+ *
+ * Three deliberate properties:
+ *
+ * 1. **The wrappers always render**, whether or not the art exists. `data-art-state` says which, so
+ *    the page has a stable skeleton from the first branch and the styled phase never has to cope with
+ *    a missing element.
+ * 2. **Art is inlined, not `<img>`**, because the motion code needs to reach individual layers by id.
+ * 3. **Bad art fails the build.** `import.meta.glob` resolves at build time, so a missing file is a
+ *    missing key rather than a 404, and `check-art.mjs` is what rejects art that breaks the contract.
+ *    Do not add `experimental.svgOptimizer` — SVGO strips the ids the contract is built on.
+ */
+import { PLANES, PLANE_FACTORS, SCENES } from "../../lib/art/contract.mjs";
+import { prepareSvg } from "../../lib/art/prepare-svg.mjs";
+import { hexIndex } from "../../lib/art/palette.mjs";
+
+interface Props {
+  /** A key of SCENES — `entrance`, `commons`, `quarters`, `kitchen`, `fire`, `edge`. */
+  scene: string;
+}
+
+const { scene } = Astro.props;
+
+if (!SCENES[scene]) {
+  throw new Error(
+    `SceneArt: unknown scene "${scene}". Known scenes: ${Object.keys(SCENES).join(", ")}. ` +
+      `Scenes are declared in src/lib/art/contract.mjs.`,
+  );
+}
+
+/**
+ * Raw Figma exports, resolved at build time. The glob is eager so a broken path is a build error,
+ * and `?raw` because the SVG is inlined rather than linked.
+ */
+const sources = import.meta.glob<string>("/src/assets/journey/**/*.svg", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+
+/**
+ * The hex → token map, built once per render from the generated palette rather than by re-parsing
+ * Grove's 1.3 MB tokens.css. Absent before `art-palette.mjs` has been run, in which case colours are
+ * left as literal hex — art still renders, it just does not follow the theme yet.
+ */
+const paletteModules = import.meta.glob<{
+  colors: { name: string; hex: string }[];
+}>("/src/assets/palette/palette.json", { import: "default", eager: true });
+const paletteManifest = Object.values(paletteModules)[0];
+const hexToToken = paletteManifest
+  ? hexIndex(paletteManifest.colors.map((c) => ({ name: c.name, hex: c.hex })))
+  : new Map<string, string[]>();
+
+const planes = PLANES.map((plane) => {
+  const raw = sources[`/src/assets/journey/${scene}/${plane}.svg`];
+  return {
+    plane,
+    factor: PLANE_FACTORS[plane],
+    markup: raw ? prepareSvg(raw, { scene, plane, hexToToken }) : null,
+  };
+});
+---
+
+{planes.map(({ plane, factor, markup }) => (
+  <div
+    data-plane={plane}
+    data-parallax={factor}
+    data-art-state={markup ? "ready" : "empty"}
+    aria-hidden="true"
+  >
+    {markup && <Fragment set:html={markup} />}
+  </div>
+))}
