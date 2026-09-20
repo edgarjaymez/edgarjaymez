@@ -1,0 +1,537 @@
+---
+/**
+ * The contact form — workaround (b), the form-submission bridge.
+ *
+ * ## Why a bridge is needed at all
+ *
+ * Read from the installed Grove 0.44.0 source, not assumed:
+ *
+ * - `gv-text-input` renders **only an `<input>` inside its shadow root**. There is no label, no
+ *   `delegatesFocus`, no `formAssociated`, no `attachInternals`. So it is **not a form control of the
+ *   surrounding light-DOM form**: it never appears in `FormData`, never takes part in native
+ *   validation, and a light `<label for>` cannot reach the input it wraps.
+ * - It dispatches `input` and `change` as `CustomEvent`s with `bubbles: true, composed: true` and
+ *   **`detail` set to the value string** (not an object — `e.detail`, never `e.detail.value`).
+ * - `gv-button` renders a shadow `<button type="submit">`. Form-owner association does not cross a
+ *   shadow boundary either, so that `type="submit"` submits nothing.
+ * - There is no `gv-textarea` in 0.44.0, so the message field has no Grove twin and stays native.
+ *
+ * ## The arrangement
+ *
+ * Native, labelled controls are the source of truth: they carry `required` and `autocomplete`, they
+ * are what `FormData` reads, and they are what submits. Each one that *has* a Grove twin sits in a
+ * `[data-native]` wrapper beside a `[data-grove hidden]` wrapper holding the twin. After both custom
+ * elements are defined the script swaps the two wrappers and mirrors the Grove inputs' values into
+ * the natives.
+ *
+ * Three states, all of them working documents:
+ *
+ * | State | What ships |
+ * |---|---|
+ * | endpoint unset | `<fieldset disabled>` + a visible notice. Nothing can be typed or sent. |
+ * | wired, Grove upgraded | Grove controls, manual validation, `fetch` submit |
+ * | wired, Grove failed or slow | the plain native form, POSTing normally |
+ *
+ * JavaScript off lands in the third row, which is why the natives are the source of truth rather than
+ * a fallback bolted on afterwards.
+ *
+ * ## The trap this component exists to avoid
+ *
+ * Once the natives are hidden, they are still **submitting** controls (`hidden` is not `disabled`) —
+ * and a `required` control that is invalid while not focusable makes Chrome refuse the submit,
+ * logging "An invalid form control … is not focusable" and doing nothing else. That is a form that
+ * silently cannot be sent. So swapping to Grove mode also sets `form.noValidate`, and validation
+ * moves into the script via `ValidityState`. The browser's own messages are not reused for display
+ * either: they come in the browser's UI language, so a Spanish page would show English errors.
+ *
+ * Invalid fields mark themselves with `gv.error` and focus moves to the **error summary**, not to a
+ * field. `gv-text-input` has no `delegatesFocus`, so focusing the host would not put the caret in the
+ * input, and reaching through `shadowRoot` to do it is not something this app does.
+ */
+import Notice from "../grove/Notice.astro";
+import type { Locale } from "../../i18n/routes";
+import { useTranslations } from "../../i18n/utils";
+import {
+  PUBLIC_CONTACT_EMAIL,
+  PUBLIC_CONTACT_ENDPOINT,
+} from "astro:env/client";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const endpoint = PUBLIC_CONTACT_ENDPOINT;
+const wired = Boolean(endpoint);
+
+/**
+ * Printed once per page render. An unwired form is a supported state, not a failure, but it is one
+ * nobody should discover from a visitor's report — so the build says it out loud.
+ */
+if (!wired) {
+  console.warn(
+    `[contact] PUBLIC_CONTACT_ENDPOINT is not set — the ${lang} contact form ships disabled ` +
+      `with a notice. Set it in .env (see .env.example) to wire the form.`,
+  );
+}
+
+const unwiredMessage = PUBLIC_CONTACT_EMAIL
+  ? t("contact.unwiredWithEmail", { email: PUBLIC_CONTACT_EMAIL })
+  : t("contact.unwiredNoEmail");
+
+/** Fields that have a Grove twin. The message does not — there is no `gv-textarea`. */
+const textFields = [
+  {
+    name: "name",
+    label: t("contact.name"),
+    type: "text",
+    autocomplete: "name",
+  },
+  {
+    name: "email",
+    label: t("contact.email"),
+    type: "email",
+    autocomplete: "email",
+  },
+] as const;
+
+/**
+ * Handed to the client script as JSON rather than through `define:vars`, which would force the script
+ * inline and un-bundled. `<` is escaped so a translated string can never close this element early.
+ */
+const strings = JSON.stringify({
+  required: t("contact.errorRequired"),
+  email: t("contact.errorEmail"),
+  emptyExpected: t("contact.honeypot"),
+  summaryHeading: t("contact.errorSummaryHeading"),
+  summaryMessage: t("contact.errorSummaryMessage"),
+  sending: t("contact.sending"),
+  submit: t("contact.submit"),
+  sentHeading: t("contact.sentHeading"),
+  sentMessage: t("contact.sentMessage"),
+  failedHeading: t("contact.failedHeading"),
+  failedMessage: t("contact.failedMessage"),
+}).replace(/</g, "\\u003c");
+---
+
+<form
+  method="post"
+  action={endpoint}
+  data-contact-form
+  data-endpoint-state={wired ? "wired" : "unwired"}
+>
+  {/* `is:inline` so Astro leaves it alone — this is data for the script below, not a module. */}
+  <script
+    is:inline
+    type="application/json"
+    data-contact-strings
+    set:html={strings}
+  ></script>
+  {!wired && (
+    <Notice
+      heading={t("contact.unwiredHeading")}
+      message={unwiredMessage}
+      type="information"
+    />
+  )}
+
+  {/* Focus lands here when validation fails; `tabindex="-1"` makes that possible without
+      adding a tab stop. Empty and hidden until the script has something to say. */}
+  <div data-form-status tabindex="-1" hidden></div>
+
+  <fieldset disabled={!wired}>
+    <legend>{t("contact.title")}</legend>
+
+    {textFields.map((field) => (
+      <div data-field-group>
+        <div data-field={field.name} data-native data-label={field.label}>
+          <label for={field.name}>{field.label}</label>
+          <input
+            id={field.name}
+            name={field.name}
+            type={field.type}
+            required
+            autocomplete={field.autocomplete}
+            aria-describedby={`${field.name}-error`}
+          />
+        </div>
+
+        {/*
+            The Grove twin carries no `name`: its input lives in a shadow root and would never
+            reach FormData, so a name here would only suggest otherwise. The visible text is a
+            plain `<span>`, not a `<label for>` — a light label cannot reach a shadow input, and
+            `aria-label` on the host is what actually names it.
+          */}
+        <div data-field={field.name} data-grove data-label={field.label} hidden>
+          <span data-grove-label>{field.label}</span>
+          <gv-text-input
+            input-id={`gv-${field.name}`}
+            type={field.type}
+            color="brand"
+            aria-label={field.label}
+            aria-describedby={`${field.name}-error`}
+          ></gv-text-input>
+        </div>
+
+        <p id={`${field.name}-error`} data-field-error hidden></p>
+      </div>
+    ))}
+
+    {/* No `gv-textarea` exists in Grove 0.44.0, so this field stays native in every state. */}
+    <div data-field-group>
+      <div data-field="message" data-native data-label={t("contact.message")}>
+        <label for="message">{t("contact.message")}</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="6"
+          required
+          aria-describedby="message-error"
+        ></textarea>
+      </div>
+      <p id="message-error" data-field-error hidden></p>
+    </div>
+
+    {/*
+      Honeypot. Kept out of the tab order and out of the accessibility tree; the styled phase hides
+      it visually, and this pass has no CSS, so it is plainly visible for now. A human who fills it
+      gets a real error telling them to empty it, rather than a silent fake success.
+    */}
+    <div data-honeypot aria-hidden="true">
+      <label for="website">{t("contact.honeypot")}</label>
+      <input
+        id="website"
+        name="website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+      />
+      <p id="website-error" data-field-error hidden></p>
+    </div>
+
+    <div data-field="submit" data-native>
+      <button type="submit">{t("contact.submit")}</button>
+    </div>
+    <div data-field="submit" data-grove hidden>
+      <gv-button
+        text={t("contact.submit")}
+        variant="filled"
+        color="accent"
+        size="md"
+        type="submit"
+      ></gv-button>
+    </div>
+  </fieldset>
+</form>
+<script>
+  /**
+   * How long to wait for Grove before giving up and leaving the native form alone. A bundle that
+   * fails, is blocked, or is merely slow then degrades to a working POST instead of leaving the page
+   * waiting on a promise that never settles.
+   */
+  const UPGRADE_TIMEOUT_MS = 2000;
+
+  interface Strings {
+    required: string;
+    email: string;
+    emptyExpected: string;
+    summaryHeading: string;
+    summaryMessage: string;
+    sending: string;
+    submit: string;
+    sentHeading: string;
+    sentMessage: string;
+    failedHeading: string;
+    failedMessage: string;
+  }
+
+  /** Grove's input, as far as this script needs it. */
+  type GroveInput = HTMLElement & { value: string; error: boolean };
+  type GroveButton = HTMLElement & { text: string; disabled: boolean };
+  type NativeControl = HTMLInputElement | HTMLTextAreaElement;
+
+  function readStrings(form: HTMLFormElement): Strings | null {
+    const node = form.querySelector("script[data-contact-strings]");
+    if (!node?.textContent) return null;
+    try {
+      return JSON.parse(node.textContent) as Strings;
+    } catch {
+      return null;
+    }
+  }
+
+  /** True if every tag upgraded in time; false if we should stay on the native form. */
+  function groveReady(tags: string[]): Promise<boolean> {
+    return Promise.race([
+      Promise.all(tags.map((tag) => customElements.whenDefined(tag))).then(
+        () => true,
+      ),
+      new Promise<boolean>((resolve) =>
+        setTimeout(() => resolve(false), UPGRADE_TIMEOUT_MS),
+      ),
+    ]);
+  }
+
+  function setupForm(form: HTMLFormElement) {
+    // An unwired form is disabled and has nothing to enhance.
+    if (form.dataset.endpointState !== "wired") return;
+
+    // Re-bound after the guard because TypeScript does not carry a narrowing across a nested
+    // function boundary — every helper below closes over this, so it has to be non-null by type.
+    const loaded = readStrings(form);
+    if (!loaded) return;
+    const strings: Strings = loaded;
+
+    const status = form.querySelector<HTMLElement>("[data-form-status]");
+
+    const errorSlot = (name: string) =>
+      form.querySelector<HTMLElement>(`#${name}-error`);
+
+    const nativeOf = (name: string) =>
+      form.querySelector<NativeControl>(
+        `[data-field="${name}"][data-native] input, [data-field="${name}"][data-native] textarea`,
+      ) ?? form.querySelector<NativeControl>(`[name="${name}"]`);
+
+    const groveOf = (name: string) =>
+      form.querySelector<GroveInput>(
+        `[data-field="${name}"][data-grove] gv-text-input`,
+      );
+
+    const submitButton = () =>
+      form.querySelector<GroveButton>(
+        '[data-field="submit"][data-grove] gv-button',
+      );
+
+    /**
+     * Every field that is validated. Read from the DOM rather than hardcoded, so adding a field to
+     * the markup does not also require remembering to add it here.
+     *
+     * The honeypot is appended explicitly: it is not in a `[data-native]` wrapper, because it is not
+     * a field a visitor is meant to fill.
+     */
+    const fields = [...form.querySelectorAll<HTMLElement>("[data-native]")]
+      .map((wrapper) => wrapper.dataset.field)
+      .filter((name): name is string => Boolean(name) && name !== "submit")
+      .concat("website");
+
+    function showFieldError(name: string, message: string | null) {
+      const slot = errorSlot(name);
+      if (slot) {
+        slot.textContent = message ?? "";
+        slot.hidden = !message;
+      }
+      const gv = groveOf(name);
+      if (gv) gv.error = Boolean(message);
+    }
+
+    /**
+     * Write the status strip. Both the Grove element and a light-DOM paragraph are created, for the
+     * same reason every other Grove wrapper in this app does it: the element projects nothing, so
+     * without the paragraph there is a moment where the message exists but cannot be read.
+     */
+    function showStatus(
+      kind: "success" | "danger",
+      heading: string,
+      message: string,
+    ) {
+      if (!status) return;
+      status.textContent = "";
+      status.hidden = false;
+      status.setAttribute("role", "alert");
+      status.setAttribute("aria-live", "assertive");
+
+      const strip = document.createElement("gv-feedback-strip");
+      strip.setAttribute("type", kind);
+      strip.setAttribute("heading", heading);
+      strip.setAttribute("message", message);
+
+      const fallback = document.createElement("p");
+      const strong = document.createElement("strong");
+      strong.textContent = heading;
+      fallback.append(strong, document.createTextNode(` ${message}`));
+      strip.append(fallback);
+      status.append(strip);
+    }
+
+    function clearStatus() {
+      if (!status) return;
+      status.hidden = true;
+      status.textContent = "";
+    }
+
+    /** `null` when the field is fine, otherwise the message to show. */
+    function validate(name: string): string | null {
+      const native = nativeOf(name);
+      if (!native) return null;
+
+      // The honeypot is the inverse of every other field: it must be empty.
+      if (name === "website") {
+        return native.value.trim() ? strings.emptyExpected : null;
+      }
+
+      const validity = native.validity;
+      if (validity.valid) return null;
+      if (validity.valueMissing) {
+        const label =
+          native.closest<HTMLElement>("[data-native]")?.dataset.label?.trim() ??
+          name;
+        return strings.required.replace("{field}", label);
+      }
+      if (validity.typeMismatch) return strings.email;
+      // A constraint we did not author. The browser's wording beats no wording.
+      return native.validationMessage;
+    }
+
+    function swapWrappers() {
+      for (const grove of form.querySelectorAll<HTMLElement>("[data-grove]")) {
+        const name = grove.dataset.field;
+        if (!name) continue;
+        const native = form.querySelector<HTMLElement>(
+          `[data-field="${name}"][data-native]`,
+        );
+        // A field with no twin — the message textarea — is left exactly as it is.
+        if (!native) continue;
+        native.hidden = true;
+        grove.hidden = false;
+      }
+
+      // Seed each Grove input from its native counterpart, so a value restored by back-navigation
+      // or filled by autofill is visible in the control the visitor is actually looking at.
+      for (const name of fields) {
+        const gv = groveOf(name);
+        const native = nativeOf(name);
+        if (gv && native && native.value) gv.value = native.value;
+      }
+    }
+
+    async function send() {
+      const failures = fields
+        .map((name) => ({ name, message: validate(name) }))
+        .filter((f): f is { name: string; message: string } =>
+          Boolean(f.message),
+        );
+
+      for (const name of fields) showFieldError(name, null);
+      for (const failure of failures)
+        showFieldError(failure.name, failure.message);
+
+      if (failures.length) {
+        showStatus("danger", strings.summaryHeading, strings.summaryMessage);
+        status?.focus();
+        return;
+      }
+
+      const button = submitButton();
+      const previousLabel = button?.text;
+      if (button) {
+        button.text = strings.sending;
+        button.disabled = true;
+      }
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) throw new Error(String(response.status));
+        showStatus("success", strings.sentHeading, strings.sentMessage);
+        form.reset();
+        for (const name of fields) {
+          const gv = groveOf(name);
+          if (gv) gv.value = "";
+        }
+      } catch {
+        showStatus("danger", strings.failedHeading, strings.failedMessage);
+      } finally {
+        if (button) {
+          button.text = previousLabel ?? strings.submit;
+          button.disabled = false;
+        }
+        status?.focus();
+      }
+    }
+
+    /**
+     * Everything here runs **only once both custom elements are defined**, and that is the whole
+     * degradation story. If the Grove bundle fails, is blocked, or is slow, none of these listeners
+     * is ever attached: no `preventDefault`, no `fetch`, no `noValidate`. What remains is the plain
+     * native form that was already on the page, which POSTs to the endpoint by itself.
+     *
+     * Attaching them eagerly would have quietly broken that — the submit handler would intercept and
+     * `fetch` from a page where Grove never loaded, leaving a form that appears to do nothing.
+     */
+    function enhance() {
+      swapWrappers();
+
+      // The natives stay in the form and keep submitting — `hidden` is not `disabled`. That is also
+      // why native validation has to go now: an invalid `required` control that cannot be focused
+      // makes Chrome refuse the submit with nothing but a console line, which is a form that
+      // silently cannot be sent.
+      form.noValidate = true;
+
+      /**
+       * Grove's `input` event is composed, so it reaches the form. `detail` is the value string
+       * itself — read from the installed source, and the reason this is `event.detail` rather than
+       * `event.detail.value`.
+       */
+      form.addEventListener("input", (event) => {
+        const target = event.target as HTMLElement | null;
+        if (target?.tagName !== "GV-TEXT-INPUT") return;
+        const name = target.closest<HTMLElement>("[data-grove]")?.dataset.field;
+        if (!name) return;
+        const native = nativeOf(name);
+        if (!native) return;
+
+        // Grove dispatches a `CustomEvent` *named* "input", but the DOM's event map types that name
+        // as `InputEvent`, so the cast has to pass through `unknown`. The runtime shape is what the
+        // installed source dispatches, and the `typeof` check below is what makes the cast safe.
+        const detail = (event as unknown as CustomEvent<string>).detail;
+        native.value =
+          typeof detail === "string" ? detail : (target as GroveInput).value;
+
+        // Clear a field's error the moment it is corrected, rather than making the visitor submit
+        // again to find out.
+        if (!validate(name)) showFieldError(name, null);
+      });
+
+      // A shadow `<button type="submit">` is not a submit button for this light-DOM form, so the
+      // click has to be translated into a real submission.
+      form.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement | null;
+        if (target?.tagName !== "GV-BUTTON") return;
+        event.preventDefault();
+        form.requestSubmit();
+      });
+
+      // Enter inside a Grove input should submit, the way it does in a native single-line field.
+      form.addEventListener("keydown", (event) => {
+        if ((event as KeyboardEvent).key !== "Enter") return;
+        const target = event.target as HTMLElement | null;
+        if (target?.tagName !== "GV-TEXT-INPUT") return;
+        event.preventDefault();
+        form.requestSubmit();
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        clearStatus();
+        void send();
+      });
+    }
+
+    void groveReady(["gv-text-input", "gv-button"]).then((ready) => {
+      if (ready) enhance();
+      // Not ready: the native form is already on the page, already labelled, already validating and
+      // already able to POST. There is nothing to undo.
+    });
+  }
+
+  for (const form of document.querySelectorAll<HTMLFormElement>(
+    "form[data-contact-form]",
+  )) {
+    setupForm(form);
+  }
+</script>

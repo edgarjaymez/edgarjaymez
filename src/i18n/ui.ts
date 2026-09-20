@@ -36,6 +36,27 @@ export const en = {
   "contact.email": "Email",
   "contact.message": "Message",
   "contact.submit": "Send message",
+  "contact.sending": "Sending…",
+  /** Kept out of the tab order and hidden in the styled phase; a bot that fills it is rejected. */
+  "contact.honeypot": "Leave this field empty",
+
+  // Validation messages. Written here rather than left to the browser's built-in bubbles: those are
+  // in the browser's UI language, not the page's, so a Spanish page would show English errors.
+  "contact.errorRequired": "{field} is required.",
+  "contact.errorEmail": "Enter an email address, like name@example.com.",
+  "contact.errorSummaryHeading": "That did not send",
+  "contact.errorSummaryMessage": "Check the fields marked below.",
+
+  "contact.sentHeading": "Message sent",
+  "contact.sentMessage": "Thank you — I will reply as soon as I can.",
+  "contact.failedHeading": "That did not send",
+  "contact.failedMessage":
+    "Something went wrong on the way. Try again in a moment.",
+
+  "contact.unwiredHeading": "The form is not connected yet",
+  "contact.unwiredWithEmail": "Send word by email instead: {email}",
+  "contact.unwiredNoEmail":
+    "No address is published yet. The trail signs below still work.",
 
   "notFound.title": "This path does not lead anywhere",
   "notFound.description": "The page you were looking for is not here.",
@@ -80,6 +101,25 @@ export const es = {
   "contact.email": "Correo electrónico",
   "contact.message": "Mensaje",
   "contact.submit": "Enviar mensaje",
+  "contact.sending": "Enviando…",
+  "contact.honeypot": "Deja este campo vacío",
+
+  "contact.errorRequired": "{field} es obligatorio.",
+  "contact.errorEmail":
+    "Escribe un correo electrónico, como nombre@ejemplo.com.",
+  "contact.errorSummaryHeading": "No se pudo enviar",
+  "contact.errorSummaryMessage": "Revisa los campos marcados abajo.",
+
+  "contact.sentHeading": "Mensaje enviado",
+  "contact.sentMessage": "Gracias — te responderé en cuanto pueda.",
+  "contact.failedHeading": "No se pudo enviar",
+  "contact.failedMessage":
+    "Algo falló en el camino. Inténtalo de nuevo en un momento.",
+
+  "contact.unwiredHeading": "El formulario aún no está conectado",
+  "contact.unwiredWithEmail": "Manda razón por correo electrónico: {email}",
+  "contact.unwiredNoEmail":
+    "Aún no hay una dirección publicada. Las señales del sendero de abajo sí funcionan.",
 
   "notFound.title": "Este camino no lleva a ningún lado",
   "notFound.description": "La página que buscabas no está aquí.",

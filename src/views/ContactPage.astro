@@ -1,0 +1,29 @@
+---
+/**
+ * The contact page for one locale.
+ *
+ * Both locale pages render this, so English and Spanish cannot drift apart — the same rule the blog,
+ * work, lab and résumé views follow.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GroveEdge from "../components/contact/GroveEdge.astro";
+import type { Locale } from "../i18n/routes";
+import { getSite } from "../lib/content";
+import { sceneCopy } from "../lib/journey";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const site = await getSite(lang);
+const copy = sceneCopy(site.scenes, "edge");
+---
+
+<BaseLayout
+  title={copy.title}
+  description={site.profile.summary}
+  route={{ key: "contact" }}
+>
+  <GroveEdge lang={lang} copy={copy} links={site.links} />
+</BaseLayout>
