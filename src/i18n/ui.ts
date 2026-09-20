@@ -37,6 +37,15 @@ export const en = {
   "notFound.back": "Go back",
   "notFound.home": "Return to the entrance",
 
+  // Section headings on the résumé. These name the document's parts rather than being written by
+  // Edgar as content, so they are labels — the résumé's own prose lives in the collection.
+  "resume.education": "Education",
+  "resume.skills": "Skills",
+  "resume.languages": "Languages",
+  "resume.present": "Present",
+  "resume.downloadPdf": "Download as PDF",
+  "resume.unavailable": "Not available yet.",
+
   // `{n}` is substituted by t(); see the interpolation note below.
   "list.count": "{n} entries",
   "entry.updated": "Updated {date}",
@@ -70,6 +79,13 @@ export const es = {
   "notFound.description": "La página que buscabas no está aquí.",
   "notFound.back": "Volver",
   "notFound.home": "Regresar a la entrada",
+
+  "resume.education": "Educación",
+  "resume.skills": "Habilidades",
+  "resume.languages": "Idiomas",
+  "resume.present": "actualidad",
+  "resume.downloadPdf": "Descargar en PDF",
+  "resume.unavailable": "Aún no disponible en español.",
 
   "list.count": "{n} entradas",
   "entry.updated": "Actualizado el {date}",
