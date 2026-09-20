@@ -6,6 +6,7 @@
  * empty is a note, not an article, so it links out (or nowhere) instead of to a one-sentence page.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
+import NowCooking from "../components/journey/parts/NowCooking.astro";
 import PotCard from "../components/entries/PotCard.astro";
 import { getEntries, getSite, type AnyEntry } from "../lib/content";
 import type { Locale } from "../i18n/routes";
@@ -40,7 +41,7 @@ const ordered = withBody.sort(
   route={{ key: "lab" }}
 >
   <h1>{t("nav.lab")}</h1>
-  {site.nowCooking && <p data-now-cooking>{site.nowCooking}</p>}
+  <NowCooking text={site.nowCooking} />
   <p>{t("list.count", { n: entries.length })}</p>
   <ul>
     {ordered.map(({ entry, hasBody }) => (

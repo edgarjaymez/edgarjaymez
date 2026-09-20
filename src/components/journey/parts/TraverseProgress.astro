@@ -1,0 +1,28 @@
+---
+/**
+ * "01 / 03" for the horizontal traverse through The Quarters.
+ *
+ * `aria-hidden`, deliberately. This is the *visual* counter the styled phase updates as the traverse
+ * scrolls — a duplicate of information every case card already carries as its own live `01 / 03`.
+ * Announcing it twice, from an element whose value changes under a scroll listener, would make the
+ * scene noisier to listen to rather than clearer. The accessible path is the cards.
+ *
+ * The numerals are separate spans so the styled phase can rewrite the current one without touching
+ * the separator or re-rendering the element.
+ */
+import { pad } from "../../../lib/journey";
+
+interface Props {
+  total: number;
+  /** Which panel is showing. Always 1 in the unstyled document; the scroll code updates it. */
+  current?: number;
+}
+
+const { total, current = 1 } = Astro.props;
+---
+
+<p data-traverse-progress aria-hidden="true">
+  <span data-traverse-current>{pad(current)}</span>
+  <span data-traverse-separator>/</span>
+  <span data-traverse-total>{pad(total)}</span>
+</p>

@@ -1,0 +1,63 @@
+---
+/**
+ * One scene of the journey — the shape every scene shares.
+ *
+ * §3f's DOM contract is written down here once. Five scenes emitting the same six attributes by
+ * hand is five chances to mistype one, and a styled-phase selector that misses would fail silently
+ * on whichever scene got it wrong.
+ *
+ * Two decisions worth naming:
+ *
+ * 1. **The surface is read from the art contract, not passed in.** A scene's surface token and its
+ *    scenery are then physically incapable of disagreeing about which surface the scene stands on.
+ * 2. **`tabindex="-1"` on the section.** The rail's anchors move focus, not just scroll position;
+ *    without it the browser scrolls and leaves focus behind, so the next Tab jumps back to the top
+ *    of the page. It is not in the tab order — `-1` only makes it focusable programmatically.
+ *
+ * The `lead` slot sits between the heading and the intro, for the one scene whose identity lines
+ * belong above the scene-setting prose rather than below it.
+ */
+import SceneArt from "./SceneArt.astro";
+import { SCENES } from "../../lib/art/contract.mjs";
+
+interface Props {
+  /** A key of SCENES — validated here and again by SceneArt. */
+  scene: string;
+  /** The visible heading text. */
+  heading: string;
+  /** `1` for the one scene that carries the page's `<h1>`; `2` everywhere else. */
+  level?: 1 | 2;
+  eyebrow?: string;
+  intro?: string;
+}
+
+const { scene, heading, level = 2, eyebrow, intro } = Astro.props;
+
+const definition = SCENES[scene];
+if (!definition) {
+  throw new Error(
+    `Scene: unknown scene "${scene}". Known scenes: ${Object.keys(SCENES).join(", ")}. ` +
+      `Scenes are declared in src/lib/art/contract.mjs.`,
+  );
+}
+
+const Heading = `h${level}` as "h1" | "h2";
+const headingId = `${scene}-title`;
+---
+
+<section
+  id={scene}
+  data-scene={scene}
+  data-surface={definition.surface}
+  tabindex="-1"
+  aria-labelledby={headingId}
+>
+  <SceneArt scene={scene} />
+  <div data-scene-content>
+    {eyebrow && <p data-eyebrow>{eyebrow}</p>}
+    <Heading id={headingId}>{heading}</Heading>
+    <slot name="lead" />
+    {intro && <p data-intro>{intro}</p>}
+    <slot />
+  </div>
+</section>

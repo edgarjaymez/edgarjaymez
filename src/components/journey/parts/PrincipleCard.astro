@@ -1,0 +1,20 @@
+---
+/**
+ * One of the three principles, carved on a stump in Common Grounds.
+ *
+ * An `<article>` like the other cards, so the scene owns the list element and this owns the entry.
+ */
+interface Props {
+  title: string;
+  body: string;
+  level?: 3;
+}
+
+const { title, body, level = 3 } = Astro.props;
+const Heading = `h${level}` as "h3";
+---
+
+<article data-principle>
+  <Heading>{title}</Heading>
+  <p>{body}</p>
+</article>

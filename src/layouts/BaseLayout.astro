@@ -14,11 +14,22 @@ interface Props {
   route: RouteDescriptor;
   image?: ImageMetadata;
   noindex?: boolean;
-  /** Journey pages provide their own chrome. */
-  bare?: boolean;
 }
 
-const { title, description, route, image, noindex, bare = false } = Astro.props;
+/**
+ * There was a `bare` prop here, added in anticipation of the journey "providing its own chrome". The
+ * journey landed and does not want it, for two reasons worth recording so it does not come back by
+ * reflex:
+ *
+ * 1. `footer#clearing` is part of the journey's own contract, and a site footer belongs *outside*
+ *    `<main>`. A journey that rendered its own would have to put it inside.
+ * 2. The header is the only route from the home page to `/resume/` and `/contact/` that is not
+ *    inside a scene. Removing it makes the home page a dead end for those two.
+ *
+ * Suppressing the header visually during the walk is a styling decision, and it belongs to the
+ * styled phase — not to a prop that changes what ships in the HTML.
+ */
+const { title, description, route, image, noindex } = Astro.props;
 
 const lang = getLang(Astro.url);
 ---
@@ -55,11 +66,11 @@ const lang = getLang(Astro.url);
   </head>
   <body>
     <SkipLink />
-    {!bare && <Header route={route} />}
+    <Header route={route} />
     {/* tabindex="-1" so the skip link can move focus here, not just scroll. */}
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    {!bare && <Footer />}
+    <Footer />
   </body>
 </html>
