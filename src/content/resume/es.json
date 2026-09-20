@@ -1,0 +1,35 @@
+{
+  "basics": {
+    "name": "Edgar Jaymez",
+    "label": "Tecnólogo de Diseño",
+    "url": "https://edgarjaymez.com",
+    "summary": "Construyo sistemas de diseño escalables que funcionan en Figma y en producción; desde la arquitectura de tokens hasta Web Components publicados.",
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "edgarjaymez",
+        "url": "https://github.com/edgarjaymez"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Marcador de posición",
+      "position": "Tecnólogo de Diseño",
+      "startDate": "2026-01",
+      "summary": "Contenido de ejemplo. Reemplazar con el historial real y decidir qué datos personales son públicos.",
+      "highlights": ["Construí y publiqué el sistema de diseño Grove."]
+    }
+  ],
+  "education": [],
+  "skills": [
+    {
+      "name": "Sistemas de diseño",
+      "keywords": ["Tokens", "Web Components", "Figma"]
+    }
+  ],
+  "languages": [
+    { "language": "Inglés", "fluency": "Fluido" },
+    { "language": "Español", "fluency": "Nativo" }
+  ]
+}
