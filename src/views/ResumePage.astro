@@ -10,6 +10,7 @@ import ResumeDocument from "../components/resume/ResumeDocument.astro";
 import { getResume, getSite } from "../lib/content";
 import type { Locale } from "../i18n/routes";
 import { useTranslations } from "../i18n/utils";
+import { PUBLIC_RESUME_PDF } from "astro:env/client";
 
 interface Props {
   lang: Locale;
@@ -20,7 +21,11 @@ const t = useTranslations(lang);
 const site = await getSite(lang);
 const resume = await getResume(lang);
 
-const pdfHref = import.meta.env.PUBLIC_RESUME_PDF as string | undefined;
+/**
+ * Read through `astro:env` rather than `import.meta.env`, so the name is declared in one schema with
+ * the contact variables instead of being a string that is either spelled right or silently undefined.
+ */
+const pdfHref = PUBLIC_RESUME_PDF;
 ---
 
 <BaseLayout

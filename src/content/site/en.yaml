@@ -41,3 +41,11 @@ scenes:
   - key: fire
     title: The Fire Circle
     intro: Rings in the wood, one for each year of telling.
+  # Not a stop on the walk — the contact page. Outsiders are received at the grove's edge, and the
+  # cacomixtle carries word in.
+  - key: edge
+    eyebrow: The Grove's Edge
+    title: Let's talk
+    intro: >-
+      This is as far in as the path goes for now. Leave word here and the
+      messenger will carry it the rest of the way.

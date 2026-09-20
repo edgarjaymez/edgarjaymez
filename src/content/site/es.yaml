@@ -41,3 +41,11 @@ scenes:
   - key: fire
     title: La Fogata
     intro: Anillos en la madera, uno por cada año de contar historias.
+  # No es una parada del camino — es la página de contacto. A los de fuera se les recibe en la
+  # linde, y el cacomixtle lleva el recado adentro.
+  - key: edge
+    eyebrow: La Linde
+    title: Hablemos
+    intro: >-
+      Hasta aquí llega el sendero por ahora. Deja tu recado y el mensajero
+      lo llevará el resto del camino.
