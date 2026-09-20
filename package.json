@@ -8,14 +8,15 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "pnpm check:art && astro build",
+    "build": "pnpm check:art && astro build && node scripts/check-dist.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "check:art": "node scripts/check-art.mjs && node scripts/art-palette.mjs --check",
     "art:palette": "node scripts/art-palette.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "astro": "astro"
+    "astro": "astro",
+    "check:dist": "node scripts/check-dist.mjs"
   },
   "dependencies": {
     "@astrojs/markdoc": "2.0.9",

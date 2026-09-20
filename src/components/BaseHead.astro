@@ -1,25 +1,51 @@
 ---
-// Import the global.css file here so that it is included on
-// all pages through the use of the <BaseHead /> component.
-
+// Grove's CSS and fonts are imported at module scope, which Vite extracts and is SSR-safe.
+// The element definitions are a separate client <script> in BaseLayout (Mode A) — never here,
+// because frontmatter runs on the server and customElements.define would throw.
 import "@edgarjaymez/grove/fonts/display/Cakra.woff2";
 import "@edgarjaymez/grove/fonts/sans-serif/InclusiveSans.woff2";
 import "@edgarjaymez/grove/fonts/sans-serif/InclusiveSans-Italic.woff2";
 import "@edgarjaymez/grove/grove.css";
 
 import type { ImageMetadata } from "astro";
+
 import FallbackImage from "../assets/fallback_thumbnail.png";
-import { SITE_TITLE } from "../consts";
+import {
+  defaultLocale,
+  getLang,
+  hreflangAlternatesFor,
+  localeMeta,
+  type RouteDescriptor,
+} from "../i18n/routes";
 
 interface Props {
   title: string;
   description: string;
+  route: RouteDescriptor;
   image?: ImageMetadata;
+  noindex?: boolean;
 }
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const {
+  title,
+  description,
+  route,
+  image = FallbackImage,
+  noindex,
+} = Astro.props;
 
-const { title, description, image = FallbackImage } = Astro.props;
+const lang = getLang(Astro.url);
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(image.src, Astro.url);
+
+/**
+ * Only exact pairs get an hreflang. Declaring `hreflang="es"` on a section index while the English
+ * page is an article tells search engines the two are equivalent, which they are not.
+ */
+const alternates = hreflangAlternatesFor(route);
+
+/** x-default points at the default locale's version, per Google's guidance. */
+const xDefault = alternates.find((a) => a.lang === defaultLocale);
 ---
 
 <!-- Global Metadata -->
@@ -32,36 +58,63 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta name="apple-mobile-web-app-title" content="edgarjaymez" />
 <meta name="theme-color" content="#416943" />
 <link rel="manifest" href="/site.webmanifest" />
-<!-- <link rel="sitemap" href="/sitemap-index.xml" /> -->
-<link
-  rel="alternate"
-  type="application/rss+xml"
-  title={SITE_TITLE}
-  href={new URL("rss.xml", Astro.site)}
-/>
+<link rel="sitemap" href="/sitemap-index.xml" />
 <meta name="generator" content={Astro.generator} />
 
-<!-- Font preloads -->
-<!-- Fonts are being imported with Grove -->
+<!--
+  No RSS <link> yet. The previous one advertised /rss.xml on every page while no such route existed,
+  so every feed reader that followed it got a 404. The per-locale feeds land with the blog routes;
+  the link comes back then, pointing at something real. src/consts.ts is unreferenced until then —
+  its titles are what the feeds will use.
+-->
 
-<!-- Canonical URL -->
+<!-- Fonts are imported through Grove at module scope, so no preload tags are needed here. -->
+
+<!-- Canonical + alternates -->
 <link rel="canonical" href={canonicalURL} />
+{alternates.map((alt) => (
+  <link
+    rel="alternate"
+    hreflang={localeMeta[alt.lang].hreflang}
+    href={new URL(alt.href, Astro.site)}
+  />
+))}
+{xDefault && (
+  <link
+    rel="alternate"
+    hreflang="x-default"
+    href={new URL(xDefault.href, Astro.site)}
+  />
+)}
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex, follow" />}
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
-<meta property="og:url" content={Astro.url} />
+<meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image.src, Astro.url)} />
+<meta property="og:image" content={socialImage} />
+<meta property="og:locale" content={localeMeta[lang].ogLocale} />
+{alternates
+  .filter((alt) => alt.lang !== lang)
+  .map((alt) => (
+    <meta
+      property="og:locale:alternate"
+      content={localeMeta[alt.lang].ogLocale}
+    />
+  ))}
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image.src, Astro.url)} />
+<!--
+  Twitter card tags use name=, not property=. They are not Open Graph; the OG namespace happens to
+  work in some crawlers, which is why the mistake survives so often.
+-->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImage} />
