@@ -19,12 +19,17 @@ export const en = {
   "nav.resume": "Résumé",
   "nav.contact": "Contact",
 
-  "hero.blogCTA": "Visit my blog in your language",
-  "hero.title": "Edgar Jaymez",
-  "hero.role": "Design Technologist",
-  "hero.description":
-    "Building scalable design systems that work in Figma and in production; from token architecture to shipped Web Components.",
+  // The name, role and summary that used to sit here were the same three strings as
+  // `profile:` in src/content/site/<locale>.yaml — the same sentence maintained twice. They are
+  // content a visitor reads, so by the scope rule above they belong to the collection, and the
+  // journey reads them from there. Only the button label is a control.
   "hero.cta": "Get in touch",
+
+  "journey.trail": "The trail",
+  "journey.seeAllWork": "See all work",
+  "journey.seeAllLab": "See everything on the stove",
+  "journey.seeAllPosts": "Read every story",
+  "journey.nothingYet": "Nothing here yet.",
 
   "contact.title": "Let's talk",
   "contact.name": "Name",
@@ -62,12 +67,13 @@ export const es = {
   "nav.resume": "Currículum",
   "nav.contact": "Contacto",
 
-  "hero.blogCTA": "Visita mi blog en tu idioma",
-  "hero.title": "Edgar Jaymez",
-  "hero.role": "Tecnólogo de Diseño",
-  "hero.description":
-    "Construyo sistemas de diseño escalables que funcionan en Figma y en producción; desde la arquitectura de tokens hasta Web Components publicados.",
   "hero.cta": "Contáctame",
+
+  "journey.trail": "El sendero",
+  "journey.seeAllWork": "Ver todo el trabajo",
+  "journey.seeAllLab": "Ver todo lo que hay en la lumbre",
+  "journey.seeAllPosts": "Leer todas las historias",
+  "journey.nothingYet": "Aún no hay nada aquí.",
 
   "contact.title": "Hablemos",
   "contact.name": "Nombre",

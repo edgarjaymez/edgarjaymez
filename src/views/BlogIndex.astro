@@ -7,9 +7,9 @@
  * to the section index rather than dead-ending.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { formatDate, isoDate } from "../lib/format";
-import { getEntries, splitId, type AnyEntry } from "../lib/content";
-import { pathFor, type Locale } from "../i18n/routes";
+import PostCard from "../components/entries/PostCard.astro";
+import { getEntries, type AnyEntry } from "../lib/content";
+import type { Locale } from "../i18n/routes";
 import { useTranslations } from "../i18n/utils";
 import { getSite } from "../lib/content";
 
@@ -32,21 +32,10 @@ const posts = (await getEntries("blog", lang)) as AnyEntry[];
   <p>{t("list.count", { n: posts.length })}</p>
 
   <ul>
-    {posts.map((post) => {
-      const slug = splitId(post.id).slug;
-      return (
-        <li>
-          <article>
-            <h2>
-              <a href={pathFor(lang, "blog", slug)}>{post.data.title}</a>
-            </h2>
-            <p>{post.data.description}</p>
-            <time datetime={isoDate(post.data.date)}>
-              {formatDate(post.data.date, lang)}
-            </time>
-          </article>
-        </li>
-      );
-    })}
+    {posts.map((post) => (
+      <li>
+        <PostCard entry={post} lang={lang} />
+      </li>
+    ))}
   </ul>
 </BaseLayout>

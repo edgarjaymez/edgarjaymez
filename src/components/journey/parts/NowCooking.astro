@@ -1,0 +1,15 @@
+---
+/**
+ * "What I've been cooking" — the one line above the pots.
+ *
+ * Renders nothing at all when the locale has not written one, rather than an empty paragraph the
+ * styled phase would still reserve space for.
+ */
+interface Props {
+  text?: string;
+}
+
+const { text } = Astro.props;
+---
+
+{text && <p data-now-cooking>{text}</p>}

@@ -1,0 +1,70 @@
+---
+/**
+ * The home page for one locale.
+ *
+ * Every content read happens here and is handed down as props, so the scenes stay presentational and
+ * the two locale pages are three lines each. It also means one place decides what "featured" and
+ * "has a body" mean on this page, rather than five components each asking the collection again.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Journey from "../components/journey/Journey.astro";
+import { locales, type Locale } from "../i18n/routes";
+import { getEntries, getSite, type AnyEntry } from "../lib/content";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const site = await getSite(lang);
+
+/**
+ * The three doors. `featured` picks them and `order` places them, because the door a case study
+ * hangs on is a deliberate choice, not "whichever was published last".
+ */
+const work = (await getEntries("work", lang)) as AnyEntry[];
+const featured = work
+  .filter((entry) => (entry.data as { featured?: boolean }).featured)
+  .sort(
+    (a, b) =>
+      (a.data as { order: number }).order - (b.data as { order: number }).order,
+  );
+
+/** Pots, in the same order the lab index uses. A pot with no body has no detail page. */
+const lab = (await getEntries("lab", lang)) as AnyEntry[];
+const pots = lab
+  .map((entry) => ({ entry, hasBody: (entry.body ?? "").trim().length > 0 }))
+  .sort(
+    (a, b) =>
+      (a.entry.data as { order: number }).order -
+      (b.entry.data as { order: number }).order,
+  );
+
+/**
+ * Posts for the fire. The fallback is only *fetched* when this locale has none — an unnecessary
+ * collection read on every build would be cheap, but so is not doing it.
+ */
+const posts = (await getEntries("blog", lang)) as AnyEntry[];
+const otherLocale = locales.find((locale) => locale !== lang) as Locale;
+const postsFallback =
+  posts.length === 0
+    ? ((await getEntries("blog", otherLocale)) as AnyEntry[]).slice(0, 1)
+    : [];
+
+const title = `${site.profile.name} — ${site.profile.role}`;
+---
+
+<BaseLayout
+  title={title}
+  description={site.profile.summary}
+  route={{ key: "home" }}
+>
+  <Journey
+    lang={lang}
+    site={site}
+    featured={featured}
+    pots={pots}
+    posts={posts}
+    postsFallback={postsFallback}
+  />
+</BaseLayout>

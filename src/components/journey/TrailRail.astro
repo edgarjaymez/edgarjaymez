@@ -1,0 +1,42 @@
+---
+/**
+ * The trail rail — the thin index of the walk.
+ *
+ * Plain in-page anchors, so it navigates with JavaScript disabled and before any motion code has
+ * loaded. The styled phase intercepts the same anchors and hands each one to ScrollTrigger's
+ * `labelToScroll`; the markup does not change when it does.
+ *
+ * **It is a sibling of `#stage`, never a descendant.** The styled phase pins it, and a pinned
+ * element whose ancestor carries a `transform`, `filter`, `backdrop-filter` or `will-change` has
+ * its `position: fixed` re-based onto that ancestor — it lands in the wrong place, with nothing in
+ * the console to say why. Keeping it outside the stage means the parallax transforms can never
+ * become its ancestor.
+ *
+ * Labels come from the same scene copy the headings use. Two places showing different words for the
+ * same place is exactly the drift the single-source rule exists to stop.
+ */
+import { pad, type JourneySceneKey, type SceneCopy } from "../../lib/journey";
+import type { Locale } from "../../i18n/routes";
+import { useTranslations } from "../../i18n/utils";
+
+interface Props {
+  lang: Locale;
+  scenes: Array<{ key: JourneySceneKey; copy: SceneCopy }>;
+}
+
+const { lang, scenes } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<nav data-trail-rail aria-label={t("journey.trail")}>
+  <ol>
+    {scenes.map(({ key, copy }, i) => (
+      <li>
+        <a href={`#${key}`} data-rail-stop={key} data-index={i + 1}>
+          <span data-rail-index>{pad(i + 1)}</span>
+          <span data-rail-label>{copy.title}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>

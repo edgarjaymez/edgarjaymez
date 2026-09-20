@@ -30,7 +30,6 @@ scenes:
     title: The Entrance
     intro: You find a path, and it is painted in a colour you have not seen yet.
   - key: commons
-    eyebrow: Common Grounds
     title: Common Grounds
     intro: The canopy closes over. Three stumps, worn smooth from use.
   - key: quarters

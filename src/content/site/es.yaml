@@ -30,7 +30,6 @@ scenes:
     title: La Entrada
     intro: Encuentras un sendero, pintado de un color que aún no has visto.
   - key: commons
-    eyebrow: El Claro Común
     title: El Claro Común
     intro: La copa se cierra arriba. Tres tocones, pulidos por el uso.
   - key: quarters
