@@ -41,8 +41,13 @@ const socialImage = new URL(image.src, Astro.url);
 /**
  * Only exact pairs get an hreflang. Declaring `hreflang="es"` on a section index while the English
  * page is an article tells search engines the two are equivalent, which they are not.
+ *
+ * A `noindex` page emits none at all. hreflang is a signal about which indexed page to show to
+ * which audience, so on a page asking not to be indexed it is meaningless — and for the 404s
+ * actively wrong, since the English one is served as `/404.html` while the registry path is
+ * `/404/`, so the pair could never be reciprocal.
  */
-const alternates = hreflangAlternatesFor(route);
+const alternates = noindex ? [] : hreflangAlternatesFor(route);
 
 /** x-default points at the default locale's version, per Google's guidance. */
 const xDefault = alternates.find((a) => a.lang === defaultLocale);

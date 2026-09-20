@@ -1,0 +1,31 @@
+---
+/**
+ * A Grove menu item that is a real link before it upgrades.
+ *
+ * `gv-menu-item` does render a native `<a>` inside its shadow root, which is better than most of
+ * the library — but the shadow root is not in the server HTML, so the link does not exist until the
+ * client bundle runs. The light-DOM `<a>` is what a crawler and a JS-less visitor follow.
+ */
+interface Props {
+  href: string;
+  label: string;
+  /** Phosphor icon name; must be imported in BaseLayout's script. */
+  icon?: string;
+  size?: "md" | "sm";
+  isActive?: boolean;
+}
+
+const { href, label, icon, size = "md", isActive = false } = Astro.props;
+---
+
+<gv-menu-item
+  href={href}
+  label={label}
+  icon={icon}
+  size={size}
+  isActive={isActive ? "true" : undefined}
+>
+  <a href={href} aria-current={isActive ? "page" : undefined}>
+    {label}
+  </a>
+</gv-menu-item>

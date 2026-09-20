@@ -1,0 +1,27 @@
+---
+/**
+ * The Spanish 404 as a real route.
+ *
+ * Static hosts only special-case `/404.html`, so this page is not what gets served for an unmatched
+ * `/es/...` path — the root 404 handles that. It exists so `/es/404/` is a real, linkable page and
+ * so the route registry is not lying about a route it declares.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../i18n/utils";
+import { pathFor } from "../../i18n/routes";
+
+const t = useTranslations("es");
+---
+
+<BaseLayout
+  title={t("notFound.title")}
+  description={t("notFound.description")}
+  route={{ key: "notFound" }}
+  noindex
+>
+  <h1>{t("notFound.title")}</h1>
+  <p>{t("notFound.description")}</p>
+  <p>
+    <a href={pathFor("es", "home")}>{t("notFound.home")}</a>
+  </p>
+</BaseLayout>
