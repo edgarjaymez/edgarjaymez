@@ -2,9 +2,10 @@
 import { render } from "astro:content";
 
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { formatDate, isoDate } from "../lib/format";
+import { isoDate } from "../lib/format";
 import type { AnyEntry } from "../lib/content";
 import type { Locale } from "../i18n/routes";
+import { useTranslations } from "../i18n/utils";
 
 interface Props {
   lang: Locale;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const { lang, entry, slugs } = Astro.props;
+const t = useTranslations(lang);
 const { Content } = await render(entry);
 const data = entry.data as {
   title: string;
@@ -35,12 +37,17 @@ const data = entry.data as {
     <header>
       <h1>{data.title}</h1>
       <dl>
-        <dt>Role</dt>
+        <dt>{t("work.role")}</dt>
         <dd>{data.role}</dd>
-        <dt>Outcome</dt>
+        <dt>{t("work.outcome")}</dt>
         <dd>{data.outcome}</dd>
-        <dt>Period</dt>
+        <dt>{t("work.period")}</dt>
         <dd>
+          {/*
+            `period` is free text the entry author wrote ("2024–2026", "six months"), so it is not
+            formatted here — that is why `formatDate` is not imported. `datetime` carries the machine
+            -readable date for anything parsing the page.
+          */}
           <time datetime={isoDate(data.date)}>{data.period}</time>
         </dd>
       </dl>

@@ -31,6 +31,12 @@ export const en = {
   "journey.seeAllPosts": "Read every story",
   "journey.nothingYet": "Nothing here yet.",
 
+  // The definition list on a case study. These name the parts of the document, so they are labels;
+  // the values they describe are content and live in the entry's frontmatter.
+  "work.role": "Role",
+  "work.outcome": "Outcome",
+  "work.period": "Period",
+
   "contact.title": "Let's talk",
   "contact.name": "Name",
   "contact.email": "Email",
@@ -95,6 +101,10 @@ export const es = {
   "journey.seeAllLab": "Ver todo lo que hay en la lumbre",
   "journey.seeAllPosts": "Leer todas las historias",
   "journey.nothingYet": "Aún no hay nada aquí.",
+
+  "work.role": "Rol",
+  "work.outcome": "Resultado",
+  "work.period": "Periodo",
 
   "contact.title": "Hablemos",
   "contact.name": "Nombre",
