@@ -1,12 +1,16 @@
 ---
-import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { useTranslations } from "../../i18n/utils";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-const lang = getLangFromUrl(Astro.url);
+const lang = "es";
 const t = useTranslations(lang);
 ---
 
-<BaseLayout title={t("contact.title")} description={t("hero.description")}>
+<BaseLayout
+  title={t("contact.title")}
+  description={t("hero.description")}
+  route={{ key: "contact" }}
+>
   <section>
     <h1>{t("contact.title")}</h1>
     <form>

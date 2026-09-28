@@ -1,27 +1,47 @@
 ---
+import type { ImageMetadata } from "astro";
+
 import BaseHead from "../components/BaseHead.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
-import { getLangFromUrl } from "../i18n/utils";
+import { getLang, localeMeta, type RouteDescriptor } from "../i18n/routes";
 
-const lang = getLangFromUrl(Astro.url);
+interface Props {
+  title: string;
+  description: string;
+  /**
+   * Which route this page is. Required, and the reason nothing has to guess: the old code derived
+   * the route by reverse-matching the last URL segment against the route table.
+   */
+  route: RouteDescriptor;
+  image?: ImageMetadata;
+  noindex?: boolean;
+}
 
-const { title, description } = Astro.props;
+const { title, description, route, image, noindex } = Astro.props;
+
+const lang = getLang(Astro.url);
 ---
 
-<html lang={lang}>
+<html lang={localeMeta[lang].htmlLang}>
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead
+      title={title}
+      description={description}
+      route={route}
+      image={image}
+      noindex={noindex}
+    />
     <slot name="head" />
     <script>
-      import "@edgarjaymez/grove";
+      import "@edgarjaymez/grove"; // bundled by Vite for the client — upgrades the gv-* tags
     </script>
   </head>
   <body>
     <header>
-      <gv-isotype size={40} color="brand" tone="light"></gv-isotype>
-      <LanguageSwitcher route={lang} />
+      <gv-isotype size="40" color="brand" tone="light"></gv-isotype>
+      <LanguageSwitcher route={route} />
     </header>
-    <main>
+    <main id="main">
       <slot />
     </main>
   </body>
