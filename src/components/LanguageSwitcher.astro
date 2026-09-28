@@ -7,8 +7,13 @@
  * a screen reader the link text is in another language.
  *
  * `alternatesFor` guarantees a destination for every locale, so this never dead-ends. When an entry
- * has no translation the link falls back to that section's index, and `aria-current` marks the page
- * you are already on.
+ * has no translation the link falls back to that section's index — and on a 404, to that locale's
+ * home, since a page that does not exist has no counterpart that does.
+ *
+ * `aria-current="page"` is claimed **only when the link actually points at this page**, which is what
+ * the attribute means. On a fallback link it would be false: the current-language link on a 404 leads
+ * to the home page, not to the 404 you are reading. The current language is still conveyed — by the
+ * link's own `lang`, and by `data-exact`, which the styled phase uses to mark the active one.
  */
 import {
   alternatesFor,
@@ -37,7 +42,8 @@ const alternates = alternatesFor(route);
           href={alt.href}
           hreflang={localeMeta[alt.lang].hreflang}
           lang={localeMeta[alt.lang].htmlLang}
-          aria-current={alt.lang === current ? "page" : undefined}
+          aria-current={alt.lang === current && alt.exact ? "page" : undefined}
+          data-current-language={alt.lang === current ? "true" : undefined}
           data-exact={alt.exact ? "true" : "false"}
         >
           {alt.label}

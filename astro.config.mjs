@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 
 import sitemap from "@astrojs/sitemap";
 
@@ -32,6 +32,42 @@ export default defineConfig({
     }),
     markdoc(),
   ],
+
+  /**
+   * Public configuration, declared rather than read ad hoc from `import.meta.env`.
+   *
+   * All three are `optional` on purpose — unset is a **supported state**, not a misconfiguration.
+   * The contact form ships visibly disabled with a notice rather than silently POSTing nowhere, and
+   * the résumé renders without a download link. Declaring them here is what makes those states
+   * checkable: a typo'd name is a build error instead of a silently `undefined` feature.
+   *
+   * `context: "client"` + `access: "public"` means the value is inlined into the client bundle. That
+   * is correct for all three — an endpoint URL, a published address and a PDF path are things the
+   * browser must know. Nothing secret belongs in this block.
+   */
+  env: {
+    schema: {
+      /** Where the contact form POSTs. Unset → the form is disabled with a visible notice. */
+      PUBLIC_CONTACT_ENDPOINT: envField.string({
+        context: "client",
+        access: "public",
+        optional: true,
+        url: true,
+      }),
+      /** The address offered while the endpoint is unwired. Unset → the notice points at the links. */
+      PUBLIC_CONTACT_EMAIL: envField.string({
+        context: "client",
+        access: "public",
+        optional: true,
+      }),
+      /** A published résumé PDF. Unset → no download link renders. */
+      PUBLIC_RESUME_PDF: envField.string({
+        context: "client",
+        access: "public",
+        optional: true,
+      }),
+    },
+  },
 
   i18n: {
     locales: ["en", "es"],
