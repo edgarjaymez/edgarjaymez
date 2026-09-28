@@ -1,0 +1,48 @@
+---
+/**
+ * The Grove's Edge — the contact page's one scene.
+ *
+ * It reuses `Scene`, the same component the five journey stops use, because the edge is built to the
+ * same contract: `data-scene`, its surface read from the art contract, three parallax planes, a focus
+ * target. It is simply not a stop on the walk — `PAGE_SCENES` is where that distinction is recorded,
+ * and it is why `JOURNEY_SCENES` does not list it.
+ *
+ * The lore is load-bearing for the copy, not decoration: Druidic is the insiders' tongue, so
+ * outsiders are received at the edge, and the cacomixtle carries word in. The email is where the
+ * messenger returns; the links are trail signs.
+ */
+import Scene from "../journey/Scene.astro";
+import ContactForm from "./ContactForm.astro";
+import type { Locale } from "../../i18n/routes";
+import type { SceneCopy } from "../../lib/journey";
+
+interface Props {
+  lang: Locale;
+  copy: SceneCopy;
+  links: Array<{ label: string; href: string; icon?: string }>;
+}
+
+const { lang, copy, links } = Astro.props;
+---
+
+<Scene
+  scene="edge"
+  level={1}
+  eyebrow={copy.eyebrow}
+  heading={copy.title}
+  intro={copy.intro}
+>
+  <ContactForm lang={lang} />
+
+  {links.length > 0 && (
+    <ul data-trail-signs>
+      {links.map((link) => (
+        <li>
+          <a href={link.href} rel="me noopener">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</Scene>

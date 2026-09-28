@@ -120,6 +120,27 @@ export interface Alternate {
  */
 export function alternatesFor(route: RouteDescriptor): Alternate[] {
   return locales.map((lang) => {
+    /**
+     * A 404 has no counterpart in another language, and cannot have one.
+     *
+     * Static hosts only special-case the exact name `/404.html`, so the English 404 is served from
+     * there while this registry's path for it is `/404/` — a URL the build never emits. Claiming the
+     * pair anyway produced a language switcher that offered "English" and led to a 404, which was
+     * both a dead link and a small joke at the visitor's expense.
+     *
+     * The other locale's home is the useful answer instead: a visitor who has landed nowhere wants a
+     * way back in, not the same nowhere in another language. `exact: false` keeps it out of hreflang,
+     * where it would be a lie — the same reason BaseHead suppresses hreflang on `noindex` pages.
+     */
+    if (route.key === "notFound") {
+      return {
+        lang,
+        href: pathFor(lang, "home"),
+        exact: false,
+        label: localeMeta[lang].label,
+      };
+    }
+
     const needsSlug = isEntryRoute(route.key);
     const slug = route.slugs?.[lang];
 
