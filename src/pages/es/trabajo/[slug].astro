@@ -1,0 +1,12 @@
+---
+import WorkEntry from "../../../views/WorkEntry.astro";
+import { entryPaths } from "../../../lib/content";
+
+export async function getStaticPaths() {
+  return entryPaths("work", "es");
+}
+
+const { entry, slugs } = Astro.props;
+---
+
+<WorkEntry lang="es" entry={entry} slugs={slugs} />

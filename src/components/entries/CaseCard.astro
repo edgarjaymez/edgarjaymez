@@ -1,0 +1,49 @@
+---
+/**
+ * One case study, as it appears in a list and (later) on a door in The Quarters.
+ *
+ * Shared between the index and the journey on purpose: a door and a list row must never show
+ * different words for the same case study.
+ */
+import { pathFor, type Locale } from "../../i18n/routes";
+import { splitId, type AnyEntry } from "../../lib/content";
+
+interface Props {
+  entry: AnyEntry;
+  lang: Locale;
+  /** The heading level to render at, so a card can sit under different outlines. */
+  level?: 2 | 3;
+  /** "01 / 03" in the journey's traverse. Live text, never drawn into the art. */
+  index?: string;
+}
+
+const { entry, lang, level = 2, index } = Astro.props;
+const data = entry.data as {
+  title: string;
+  description: string;
+  role: string;
+  outcome: string;
+  period: string;
+  stack: string[];
+};
+const href = pathFor(lang, "work", splitId(entry.id).slug);
+const Heading = `h${level}` as "h2" | "h3";
+---
+
+<article data-case-card>
+  {index && <p data-case-index>{index}</p>}
+  <Heading>
+    <a href={href}>{data.title}</a>
+  </Heading>
+  <p data-role>{data.role}</p>
+  <p data-outcome>{data.outcome}</p>
+  <p data-period>{data.period}</p>
+  <p>{data.description}</p>
+  {data.stack.length > 0 && (
+    <ul data-stack>
+      {data.stack.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  )}
+</article>

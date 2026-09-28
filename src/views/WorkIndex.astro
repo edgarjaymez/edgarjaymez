@@ -1,0 +1,59 @@
+---
+/**
+ * The work index — every case study, not just the three featured ones.
+ *
+ * The journey's Quarters shows three doors; this page is where the rest live, which is why the
+ * index exists separately rather than the journey being the only surface.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CaseCard from "../components/entries/CaseCard.astro";
+import { getEntries, getSite, type AnyEntry } from "../lib/content";
+import type { Locale } from "../i18n/routes";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const site = await getSite(lang);
+const entries = (await getEntries("work", lang)) as AnyEntry[];
+
+/**
+ * The Quarters has exactly three doors, and the art is drawn for three. More or fewer is not an
+ * error here — it is a mismatch between content and scenery that someone has to resolve — so it
+ * warns at build time rather than failing.
+ */
+const featured = entries.filter(
+  (e) => (e.data as { featured: boolean }).featured,
+);
+if (featured.length !== 3) {
+  console.warn(
+    `[content] work (${lang}): ${featured.length} featured case studies, but The Quarters is drawn ` +
+      `with 3 doors. Set featured: true on exactly three, or redraw quarters/mid.svg.`,
+  );
+}
+
+/** Door order is the `order` field, not file order or date. */
+const ordered = [...entries].sort(
+  (a, b) =>
+    (a.data as { order: number }).order - (b.data as { order: number }).order,
+);
+---
+
+<BaseLayout
+  title={t("nav.work")}
+  description={site.profile.summary}
+  route={{ key: "work" }}
+>
+  <h1>{t("nav.work")}</h1>
+  <p>{t("list.count", { n: entries.length })}</p>
+  <ul>
+    {ordered.map((entry) => (
+      <li>
+        <CaseCard entry={entry} lang={lang} />
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
