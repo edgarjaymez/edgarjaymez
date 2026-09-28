@@ -1,0 +1,51 @@
+---
+/**
+ * One experiment — a pot on the stove.
+ *
+ * A pot only links to a detail page when it has a body worth reading. One with just a note either
+ * links out to where it actually lives, or is not a link at all. A detail page containing one
+ * sentence is worse than no page.
+ */
+import StatusTag from "./StatusTag.astro";
+import { pathFor, type Locale } from "../../i18n/routes";
+import { splitId, type AnyEntry } from "../../lib/content";
+import { formatDate, isoDate } from "../../lib/format";
+
+interface Props {
+  entry: AnyEntry;
+  lang: Locale;
+  hasBody: boolean;
+  level?: 2 | 3;
+}
+
+const { entry, lang, hasBody, level = 2 } = Astro.props;
+const data = entry.data as {
+  title: string;
+  note: string;
+  status: "shipped" | "simmering" | "burnt";
+  lastTouched: Date;
+  href?: string;
+};
+const Heading = `h${level}` as "h2" | "h3";
+
+const destination = hasBody
+  ? pathFor(lang, "lab", splitId(entry.id).slug)
+  : data.href;
+---
+
+<article data-pot-card data-status={data.status}>
+  <Heading>
+    {destination ? (
+      <a href={destination} rel={hasBody ? undefined : "noopener"}>
+        {data.title}
+      </a>
+    ) : (
+      data.title
+    )}
+  </Heading>
+  <StatusTag status={data.status} lang={lang} />
+  <p>{data.note}</p>
+  <time datetime={isoDate(data.lastTouched)}>
+    {formatDate(data.lastTouched, lang)}
+  </time>
+</article>

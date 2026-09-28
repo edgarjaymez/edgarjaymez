@@ -1,0 +1,26 @@
+---
+/**
+ * A pot's status, in kitchen terms.
+ *
+ * Plain markup: Grove has no tag or pill component. A draft for one exists in grove-lit's issues
+ * but is scoped to the ToDo list, so this stays app-level until Grove ships `gv-tag`.
+ *
+ * The status word is translated copy; `data-status` is the stable hook the styled phase reads, so
+ * styling never depends on the visible text.
+ */
+import type { Locale } from "../../i18n/routes";
+
+interface Props {
+  status: "shipped" | "simmering" | "burnt";
+  lang: Locale;
+}
+
+const { status, lang } = Astro.props;
+
+const labels = {
+  en: { shipped: "Shipped", simmering: "Simmering", burnt: "Burnt" },
+  es: { shipped: "Publicado", simmering: "A fuego lento", burnt: "Se quemó" },
+} as const;
+---
+
+<span data-status={status}>{labels[lang][status]}</span>

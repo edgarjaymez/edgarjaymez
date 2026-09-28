@@ -1,0 +1,51 @@
+---
+import { render } from "astro:content";
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import StatusTag from "../components/entries/StatusTag.astro";
+import { formatDate, isoDate } from "../lib/format";
+import type { AnyEntry } from "../lib/content";
+import type { Locale } from "../i18n/routes";
+
+interface Props {
+  lang: Locale;
+  entry: AnyEntry;
+  slugs: Partial<Record<Locale, string>>;
+}
+
+const { lang, entry, slugs } = Astro.props;
+const { Content } = await render(entry);
+const data = entry.data as {
+  title: string;
+  description: string;
+  note: string;
+  status: "shipped" | "simmering" | "burnt";
+  lastTouched: Date;
+  href?: string;
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  route={{ key: "lab", slugs }}
+>
+  <article>
+    <header>
+      <h1>{data.title}</h1>
+      <StatusTag status={data.status} lang={lang} />
+      <p>{data.note}</p>
+      <time datetime={isoDate(data.lastTouched)}>
+        {formatDate(data.lastTouched, lang)}
+      </time>
+      {data.href && (
+        <p>
+          <a href={data.href} rel="noopener">
+            {data.href}
+          </a>
+        </p>
+      )}
+    </header>
+    <Content />
+  </article>
+</BaseLayout>

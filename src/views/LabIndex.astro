@@ -1,0 +1,52 @@
+---
+/**
+ * The lab index — what is cooking.
+ *
+ * `hasBody` decides whether each pot gets a detail page at all. An entry whose Markdoc body is
+ * empty is a note, not an article, so it links out (or nowhere) instead of to a one-sentence page.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PotCard from "../components/entries/PotCard.astro";
+import { getEntries, getSite, type AnyEntry } from "../lib/content";
+import type { Locale } from "../i18n/routes";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const site = await getSite(lang);
+const entries = (await getEntries("lab", lang)) as AnyEntry[];
+
+const withBody = await Promise.all(
+  entries.map(async (entry) => ({
+    entry,
+    hasBody: (entry.body ?? "").trim().length > 0,
+  })),
+);
+
+const ordered = withBody.sort(
+  (a, b) =>
+    (a.entry.data as { order: number }).order -
+    (b.entry.data as { order: number }).order,
+);
+---
+
+<BaseLayout
+  title={t("nav.lab")}
+  description={site.profile.summary}
+  route={{ key: "lab" }}
+>
+  <h1>{t("nav.lab")}</h1>
+  {site.nowCooking && <p data-now-cooking>{site.nowCooking}</p>}
+  <p>{t("list.count", { n: entries.length })}</p>
+  <ul>
+    {ordered.map(({ entry, hasBody }) => (
+      <li>
+        <PotCard entry={entry} lang={lang} hasBody={hasBody} />
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
