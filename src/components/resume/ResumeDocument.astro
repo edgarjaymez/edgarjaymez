@@ -1,0 +1,178 @@
+---
+/**
+ * The résumé, rendered from JSON Resume.
+ *
+ * Structure only. Dates use locale-aware `Intl` month formatting in UTC, so "2026-01" reads
+ * "January 2026" or "enero de 2026" rather than an ISO string, and does not shift by timezone.
+ *
+ * A missing `endDate` means "present" — that is JSON Resume's convention, and rendering it as an
+ * empty range instead would read as a mistake.
+ */
+import { formatMonth } from "../../lib/format";
+import type { Locale } from "../../i18n/routes";
+import { useTranslations } from "../../i18n/utils";
+
+interface Props {
+  lang: Locale;
+  data: {
+    basics: {
+      name: string;
+      label: string;
+      email?: string;
+      phone?: string;
+      url?: string;
+      summary?: string;
+      location?: { city: string; region?: string; countryCode?: string };
+      profiles: Array<{ network: string; username: string; url: string }>;
+    };
+    work: Array<{
+      name: string;
+      position: string;
+      url?: string;
+      startDate: string;
+      endDate?: string;
+      summary?: string;
+      highlights: string[];
+    }>;
+    education: Array<{
+      institution: string;
+      area?: string;
+      studyType?: string;
+      startDate?: string;
+      endDate?: string;
+    }>;
+    skills: Array<{ name: string; keywords: string[] }>;
+    languages: Array<{ language: string; fluency: string }>;
+  };
+}
+
+const { lang, data } = Astro.props;
+const t = useTranslations(lang);
+
+/** "2026-01" → a Date at UTC midnight on the first of that month. */
+const monthDate = (value: string) =>
+  new Date(`${value.length === 7 ? `${value}-01` : value}T00:00:00Z`);
+
+const present = t("resume.present");
+
+const range = (start?: string, end?: string) => {
+  if (!start) return undefined;
+  const from = formatMonth(monthDate(start), lang);
+  const to = end ? formatMonth(monthDate(end), lang) : present;
+  return `${from} — ${to}`;
+};
+---
+
+<article data-resume>
+  <header>
+    <h1>{data.basics.name}</h1>
+    <p>{data.basics.label}</p>
+    {data.basics.summary && <p>{data.basics.summary}</p>}
+    <ul>
+      {data.basics.email && (
+        <li>
+          <a href={`mailto:${data.basics.email}`}>{data.basics.email}</a>
+        </li>
+      )}
+      {data.basics.phone && <li>{data.basics.phone}</li>}
+      {data.basics.url && (
+        <li>
+          <a href={data.basics.url}>{data.basics.url}</a>
+        </li>
+      )}
+      {data.basics.location && (
+        <li>
+          {[data.basics.location.city, data.basics.location.region]
+            .filter(Boolean)
+            .join(", ")}
+        </li>
+      )}
+      {data.basics.profiles.map((p) => (
+        <li>
+          <a href={p.url} rel="me noopener">
+            {p.network}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </header>
+
+  {data.work.length > 0 && (
+    <section>
+      <h2>{t("nav.work")}</h2>
+      <ol>
+        {data.work.map((job) => (
+          <li>
+            <h3>{job.position}</h3>
+            <p>
+              {job.url ? (
+                <a href={job.url} rel="noopener">
+                  {job.name}
+                </a>
+              ) : (
+                job.name
+              )}
+            </p>
+            <p>{range(job.startDate, job.endDate)}</p>
+            {job.summary && <p>{job.summary}</p>}
+            {job.highlights.length > 0 && (
+              <ul>
+                {job.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  {data.education.length > 0 && (
+    <section>
+      <h2>{t("resume.education")}</h2>
+      <ol>
+        {data.education.map((e) => (
+          <li>
+            <h3>{e.institution}</h3>
+            <p>{[e.studyType, e.area].filter(Boolean).join(", ")}</p>
+            <p>{range(e.startDate, e.endDate)}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  {data.skills.length > 0 && (
+    <section>
+      <h2>{t("resume.skills")}</h2>
+      <ul>
+        {data.skills.map((s) => (
+          <li>
+            <h3>{s.name}</h3>
+            {s.keywords.length > 0 && (
+              <ul>
+                {s.keywords.map((k) => (
+                  <li>{k}</li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {data.languages.length > 0 && (
+    <section>
+      <h2>{t("resume.languages")}</h2>
+      <ul>
+        {data.languages.map((l) => (
+          <li>
+            {l.language} — {l.fluency}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</article>
