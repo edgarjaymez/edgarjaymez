@@ -1,0 +1,40 @@
+---
+/**
+ * The Entrance — arrival and identity. Surface `ground`, the only scene in full daylight.
+ *
+ * **Why the heading is the name, not the scene title.** Every other scene's heading is its title,
+ * per the single-source rule. Here the art is two gate trees arching *over the name*, and this
+ * heading is the page's `<h1>` — the one string a search result and a screen reader's first
+ * announcement both use. "The Entrance" would be a worse answer to "whose site is this". So the
+ * scene title moves up to the eyebrow, where it is still visible and still the same string the rail
+ * shows. One source, two places, nothing retyped.
+ */
+import Scene from "../Scene.astro";
+import LinkButton from "../../grove/LinkButton.astro";
+import { pathFor, type Locale } from "../../../i18n/routes";
+import { useTranslations } from "../../../i18n/utils";
+import type { SceneCopy } from "../../../lib/journey";
+
+interface Props {
+  lang: Locale;
+  copy: SceneCopy;
+  profile: { name: string; role: string; summary: string };
+}
+
+const { lang, copy, profile } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<Scene
+  scene="entrance"
+  level={1}
+  eyebrow={copy.eyebrow ?? copy.title}
+  heading={profile.name}
+  intro={copy.intro}
+>
+  <p slot="lead" data-role>
+    {profile.role}
+  </p>
+  <p data-summary>{profile.summary}</p>
+  <LinkButton href={pathFor(lang, "contact")} text={t("hero.cta")} size="lg" />
+</Scene>

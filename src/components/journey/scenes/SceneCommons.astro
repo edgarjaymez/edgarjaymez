@@ -1,0 +1,56 @@
+---
+/**
+ * Common Grounds — the welcome. Surface `brand-terrace`.
+ *
+ * Three principles carved on three ringed stumps, whether the visitor is available to hire is
+ * answered plainly, and the trail signs out of the grove. `data-availability` is a state the styled
+ * phase reads; the sentence a visitor reads is content, so it lives in the site singleton.
+ */
+import Scene from "../Scene.astro";
+import PrincipleCard from "../parts/PrincipleCard.astro";
+import type { Locale } from "../../../i18n/routes";
+import type { SceneCopy } from "../../../lib/journey";
+
+interface Props {
+  lang: Locale;
+  copy: SceneCopy;
+  availability: { open: boolean; note: string };
+  principles: Array<{ title: string; body: string }>;
+  links: Array<{ label: string; href: string; icon?: string }>;
+}
+
+const { copy, availability, principles, links } = Astro.props;
+---
+
+<Scene
+  scene="commons"
+  heading={copy.title}
+  eyebrow={copy.eyebrow}
+  intro={copy.intro}
+>
+  <p data-availability={availability.open ? "open" : "closed"}>
+    {availability.note}
+  </p>
+
+  {principles.length > 0 && (
+    <ul data-principles>
+      {principles.map((principle) => (
+        <li>
+          <PrincipleCard title={principle.title} body={principle.body} />
+        </li>
+      ))}
+    </ul>
+  )}
+
+  {links.length > 0 && (
+    <ul data-trail-signs>
+      {links.map((link) => (
+        <li>
+          <a href={link.href} rel="me noopener">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</Scene>

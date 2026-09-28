@@ -1,0 +1,52 @@
+---
+/**
+ * The Kitchen — the experiments. Surface `accent-terrace`.
+ *
+ * Pots on the stove, each carrying its status on the `<li>` so the styled phase can place a
+ * `simmering` pot differently from a `burnt` one without reading into the card. `hasBody` is decided
+ * by the caller because it is the same question the lab index and the lab routes ask, and it must be
+ * answered the same way in all three: a pot with no body has no detail page to link to.
+ */
+import Scene from "../Scene.astro";
+import PotCard from "../../entries/PotCard.astro";
+import NowCooking from "../parts/NowCooking.astro";
+import { pathFor, type Locale } from "../../../i18n/routes";
+import type { AnyEntry } from "../../../lib/content";
+import { useTranslations } from "../../../i18n/utils";
+import type { SceneCopy } from "../../../lib/journey";
+
+interface Props {
+  lang: Locale;
+  copy: SceneCopy;
+  pots: Array<{ entry: AnyEntry; hasBody: boolean }>;
+  nowCooking?: string;
+}
+
+const { lang, copy, pots, nowCooking } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<Scene
+  scene="kitchen"
+  heading={copy.title}
+  eyebrow={copy.eyebrow}
+  intro={copy.intro}
+>
+  <NowCooking text={nowCooking} />
+
+  {pots.length > 0 ? (
+    <ul data-pots>
+      {pots.map(({ entry, hasBody }) => (
+        <li data-status={(entry.data as { status: string }).status}>
+          <PotCard entry={entry} lang={lang} hasBody={hasBody} level={3} />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p data-empty>{t("journey.nothingYet")}</p>
+  )}
+
+  <p>
+    <a href={pathFor(lang, "lab")}>{t("journey.seeAllLab")}</a>
+  </p>
+</Scene>

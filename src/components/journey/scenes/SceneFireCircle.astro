@@ -1,0 +1,67 @@
+---
+/**
+ * The Fire Circle — the blog. Surface `brand-aurora`, the only scene at night.
+ *
+ * **The locale fallback.** This locale's posts are listed when there are any. When there are none,
+ * the fire is not left empty — the other locale's latest post is shown instead, tagged with the
+ * language it is written in. An empty fire circle on a site that demonstrably has a blog reads as
+ * broken; a post in the other language reads as honest, and the reader can decide.
+ *
+ * That is a per-*section* fallback, not a per-post one: once this locale has anything at all, only
+ * its own posts are listed. Mixing languages in a list that already has content would make the
+ * section look like a translation failure rather than a choice.
+ *
+ * `data-ring` numbers each post outward from the fire so the styled phase can bind a post to a
+ * `fire-ring-NN` layer. The art ships at least five rings, so the count can grow without new art.
+ */
+import Scene from "../Scene.astro";
+import PostCard from "../../entries/PostCard.astro";
+import { locales, pathFor, type Locale } from "../../../i18n/routes";
+import type { AnyEntry } from "../../../lib/content";
+import { useTranslations } from "../../../i18n/utils";
+import type { SceneCopy } from "../../../lib/journey";
+
+interface Props {
+  lang: Locale;
+  copy: SceneCopy;
+  /** Posts in this page's locale. */
+  posts: AnyEntry[];
+  /** The other locale's latest, used only when `posts` is empty. */
+  fallback: AnyEntry[];
+}
+
+const { lang, copy, posts, fallback } = Astro.props;
+const t = useTranslations(lang);
+
+const otherLocale = locales.find((locale) => locale !== lang) as Locale;
+const showing = posts.length > 0 ? posts : fallback;
+const isFallback = posts.length === 0 && fallback.length > 0;
+---
+
+<Scene
+  scene="fire"
+  heading={copy.title}
+  eyebrow={copy.eyebrow}
+  intro={copy.intro}
+>
+  {showing.length > 0 ? (
+    <ul data-posts data-locale-fallback={isFallback ? otherLocale : undefined}>
+      {showing.map((post, i) => (
+        <li data-ring={i + 1}>
+          <PostCard
+            entry={post}
+            lang={lang}
+            level={3}
+            postLocale={isFallback ? otherLocale : undefined}
+          />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p data-empty>{t("journey.nothingYet")}</p>
+  )}
+
+  <p>
+    <a href={pathFor(lang, "blog")}>{t("journey.seeAllPosts")}</a>
+  </p>
+</Scene>

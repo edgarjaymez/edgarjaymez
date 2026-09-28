@@ -1,0 +1,83 @@
+---
+/**
+ * The journey — "One Long Walk", assembled.
+ *
+ * The structure here *is* §3f's contract:
+ *
+ *     #journey
+ *       #stage            ← the five scenes, in walking order
+ *       nav[data-trail-rail]   ← sibling of the stage, never inside it
+ *
+ * `#stage` exists as its own element so the styled phase has something to pin and transform that is
+ * not also the rail's ancestor. See TrailRail for why that distinction is load-bearing rather than
+ * tidy.
+ *
+ * With no CSS and no JavaScript this renders as five sections in order, each with a heading and its
+ * content, followed by a list of links to them. That is the "complete static document" the approved
+ * spec asks for — reached by construction rather than by a fallback path.
+ */
+import SceneCommons from "./scenes/SceneCommons.astro";
+import SceneEntrance from "./scenes/SceneEntrance.astro";
+import SceneFireCircle from "./scenes/SceneFireCircle.astro";
+import SceneKitchen from "./scenes/SceneKitchen.astro";
+import SceneQuarters from "./scenes/SceneQuarters.astro";
+import TrailRail from "./TrailRail.astro";
+import type { Locale } from "../../i18n/routes";
+import type { AnyEntry } from "../../lib/content";
+import { journeyScenes, sceneCopy, type SceneCopy } from "../../lib/journey";
+
+interface Props {
+  lang: Locale;
+  site: {
+    profile: { name: string; role: string; summary: string };
+    availability: { open: boolean; note: string };
+    links: Array<{ label: string; href: string; icon?: string }>;
+    principles: Array<{ title: string; body: string }>;
+    nowCooking?: string;
+    scenes: SceneCopy[];
+  };
+  featured: AnyEntry[];
+  pots: Array<{ entry: AnyEntry; hasBody: boolean }>;
+  posts: AnyEntry[];
+  postsFallback: AnyEntry[];
+}
+
+const { lang, site, featured, pots, posts, postsFallback } = Astro.props;
+
+/** Resolved once, so the rail and the stage cannot disagree about order or labels. */
+const scenes = journeyScenes(site.scenes);
+const copyFor = (key: Parameters<typeof sceneCopy>[1]) =>
+  sceneCopy(site.scenes, key);
+---
+
+<div id="journey">
+  <div id="stage">
+    <SceneEntrance
+      lang={lang}
+      copy={copyFor("entrance")}
+      profile={site.profile}
+    />
+    <SceneCommons
+      lang={lang}
+      copy={copyFor("commons")}
+      availability={site.availability}
+      principles={site.principles}
+      links={site.links}
+    />
+    <SceneQuarters lang={lang} copy={copyFor("quarters")} featured={featured} />
+    <SceneKitchen
+      lang={lang}
+      copy={copyFor("kitchen")}
+      pots={pots}
+      nowCooking={site.nowCooking}
+    />
+    <SceneFireCircle
+      lang={lang}
+      copy={copyFor("fire")}
+      posts={posts}
+      fallback={postsFallback}
+    />
+  </div>
+
+  <TrailRail lang={lang} scenes={scenes} />
+</div>

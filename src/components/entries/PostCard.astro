@@ -1,0 +1,65 @@
+---
+/**
+ * One blog post, as it appears in a list and on a year-ring in The Fire Circle.
+ *
+ * Shared between the index and the journey for the same reason the case card is: a ring and a list
+ * row must never show different words for the same post.
+ *
+ * **The `postLocale` case.** The Fire Circle falls back to the other locale's latest post when this
+ * locale has none, so a card sometimes carries text in a language the surrounding page is not in.
+ * When it does, the title and the description get their own `lang`, and the link gets `hreflang`, so
+ * a screen reader switches voice for those two nodes instead of reading Spanish with English
+ * phonetics. The date is left in the page's language: it is metadata about the post, not part of
+ * the post's foreign text.
+ */
+import { localeMeta, pathFor, type Locale } from "../../i18n/routes";
+import { splitId, type AnyEntry } from "../../lib/content";
+import { formatDate, isoDate } from "../../lib/format";
+import { useTranslations } from "../../i18n/utils";
+
+interface Props {
+  entry: AnyEntry;
+  /** The locale of the page this card is on. */
+  lang: Locale;
+  /** The heading level to render at, so a card can sit under different outlines. */
+  level?: 2 | 3;
+  /** The locale the post itself is in. Only set when it differs from the page's. */
+  postLocale?: Locale;
+}
+
+const { entry, lang, level = 2, postLocale } = Astro.props;
+const t = useTranslations(lang);
+
+const data = entry.data as {
+  title: string;
+  description: string;
+  date: Date;
+};
+
+const locale = postLocale ?? lang;
+const foreign = locale !== lang;
+const href = pathFor(locale, "blog", splitId(entry.id).slug);
+const Heading = `h${level}` as "h2" | "h3";
+
+/** `undefined` rather than `false` — an attribute that should be absent, not empty. */
+const foreignLang = foreign ? localeMeta[locale].htmlLang : undefined;
+---
+
+<article data-post-card data-post-locale={foreign ? locale : undefined}>
+  <Heading>
+    <a
+      href={href}
+      lang={foreignLang}
+      hreflang={foreign ? localeMeta[locale].hreflang : undefined}
+    >
+      {data.title}
+    </a>
+  </Heading>
+  <p lang={foreignLang}>{data.description}</p>
+  <time datetime={isoDate(data.date)}>{formatDate(data.date, lang)}</time>
+  {foreign && (
+    <p data-language-tag>
+      {t("entry.readInOtherLanguage", { language: localeMeta[locale].label })}
+    </p>
+  )}
+</article>

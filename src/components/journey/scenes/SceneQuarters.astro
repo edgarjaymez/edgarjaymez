@@ -1,0 +1,65 @@
+---
+/**
+ * The Quarters — the case studies. Surface `brand-summit`.
+ *
+ * One door per featured case study, in `order`. In the styled phase this `<ol>` becomes the
+ * horizontal traverse, which is why the panels are an ordered list and each one carries its index:
+ * the reading order and the travelling order are the same fact, and a screen reader gets it from the
+ * list rather than from the scroll position.
+ *
+ * `data-id` is the case study's slug, so the motion code can bind a panel to the `door-NN` layer in
+ * `quarters/mid.svg` without depending on DOM position.
+ *
+ * The art is drawn with three doors. `/work/` is where the rest live, and the index page is what
+ * warns when the featured count and the door count disagree — warning again here would print it
+ * twice per build and teach everyone to skip it.
+ */
+import Scene from "../Scene.astro";
+import CaseCard from "../../entries/CaseCard.astro";
+import TraverseProgress from "../parts/TraverseProgress.astro";
+import { pathFor, type Locale } from "../../../i18n/routes";
+import { splitId, type AnyEntry } from "../../../lib/content";
+import { useTranslations } from "../../../i18n/utils";
+import { pad, type SceneCopy } from "../../../lib/journey";
+
+interface Props {
+  lang: Locale;
+  copy: SceneCopy;
+  featured: AnyEntry[];
+}
+
+const { lang, copy, featured } = Astro.props;
+const t = useTranslations(lang);
+const total = featured.length;
+---
+
+<Scene
+  scene="quarters"
+  heading={copy.title}
+  eyebrow={copy.eyebrow}
+  intro={copy.intro}
+>
+  {total > 0 ? (
+    <>
+      <TraverseProgress total={total} />
+      <ol data-traverse>
+        {featured.map((entry, i) => (
+          <li data-panel data-id={splitId(entry.id).slug} data-index={i + 1}>
+            <CaseCard
+              entry={entry}
+              lang={lang}
+              level={3}
+              index={`${pad(i + 1)} / ${pad(total)}`}
+            />
+          </li>
+        ))}
+      </ol>
+    </>
+  ) : (
+    <p data-empty>{t("journey.nothingYet")}</p>
+  )}
+
+  <p>
+    <a href={pathFor(lang, "work")}>{t("journey.seeAllWork")}</a>
+  </p>
+</Scene>

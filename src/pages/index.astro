@@ -1,26 +1,5 @@
 ---
-import LinkButton from "../components/grove/LinkButton.astro";
-import { pathFor } from "../i18n/routes";
-import { useTranslations } from "../i18n/utils";
-import BaseLayout from "../layouts/BaseLayout.astro";
-
-const lang = "en";
-const t = useTranslations(lang);
+import JourneyPage from "../views/JourneyPage.astro";
 ---
 
-<BaseLayout
-  title={t("hero.title")}
-  description={t("hero.description")}
-  route={{ key: "home" }}
->
-  <section>
-    <h1>{t("hero.title")}</h1>
-    <p>{t("hero.role")}</p>
-    <p>{t("hero.description")}</p>
-    <LinkButton
-      href={pathFor(lang, "contact")}
-      text={t("hero.cta")}
-      size="lg"
-    />
-  </section>
-</BaseLayout>
+<JourneyPage lang="en" />

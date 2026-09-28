@@ -1,14 +1,16 @@
 ---
 import { useTranslations } from "../../i18n/utils";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getSite } from "../../lib/content";
 
 const lang = "es";
 const t = useTranslations(lang);
+const site = await getSite(lang);
 ---
 
 <BaseLayout
   title={t("contact.title")}
-  description={t("hero.description")}
+  description={site.profile.summary}
   route={{ key: "contact" }}
 >
   <section>
