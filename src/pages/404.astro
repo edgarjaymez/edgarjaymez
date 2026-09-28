@@ -1,0 +1,52 @@
+---
+/**
+ * The root 404.
+ *
+ * In a static build only `/404.html` is special — a host serves it for any unmatched path,
+ * including `/es/something-wrong`. So this one page has to answer in both languages: the English
+ * copy is the default, and the Spanish block is revealed when the path says the visitor was
+ * heading somewhere Spanish.
+ *
+ * `hidden` sits on a plain light-DOM wrapper, never on a `gv-*` host — Grove sets
+ * `:host { display: block }` and ships no `[hidden]` rule, so a hidden gv-* element stays visible.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { en, es } from "../i18n/ui";
+---
+
+<BaseLayout
+  title={en["notFound.title"]}
+  description={en["notFound.description"]}
+  route={{ key: "notFound" }}
+  noindex
+>
+  <div data-lang-block="en">
+    <h1>{en["notFound.title"]}</h1>
+    <p>{en["notFound.description"]}</p>
+    <p>
+      <a href="/">{en["notFound.home"]}</a>
+    </p>
+  </div>
+
+  <div data-lang-block="es" hidden lang="es">
+    <h1>{es["notFound.title"]}</h1>
+    <p>{es["notFound.description"]}</p>
+    <p>
+      <a href="/es/">{es["notFound.home"]}</a>
+    </p>
+  </div>
+
+  <script is:inline>
+    // Inline and tiny on purpose: this runs before paint so the right language is the first thing
+    // shown, and it must work even if the main bundle never loads.
+    if (location.pathname.startsWith("/es/")) {
+      var en = document.querySelector('[data-lang-block="en"]');
+      var es = document.querySelector('[data-lang-block="es"]');
+      if (en && es) {
+        en.hidden = true;
+        es.hidden = false;
+        document.documentElement.lang = "es";
+      }
+    }
+  </script>
+</BaseLayout>

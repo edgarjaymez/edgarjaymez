@@ -6,8 +6,7 @@
  * `<html lang>` matches the path, or that hreflang is reciprocal — and every one of those has been
  * wrong in this repo at some point. This reads `dist/` and checks the claims.
  *
- * v1 (this branch) covers routing and i18n. Later branches extend it: exactly one light-DOM `<h1>`
- * per page, and Phosphor icon-import coverage.
+ * v2 covers routing, i18n, exactly one light-DOM `<h1>` per page, and Phosphor icon coverage.
  *
  *   node scripts/check-dist.mjs               check dist/
  *   node scripts/check-dist.mjs --require-all  also fail on registry routes not built yet
@@ -207,6 +206,63 @@ for (const [urlPath, file] of byPath) {
         where,
         `hreflang to ${target} is not reciprocal — that page does not link back.`,
       );
+  }
+
+  // Exactly one light-DOM <h1>. Zero means the page has no heading a crawler or a JS-less visitor
+  // can see -- the failure mode Grove's slotless components create, since <gv-title heading="…">
+  // serialises as an empty shell. More than one is an outline problem.
+  //
+  // The root 404 is the one legitimate exception: static hosts only special-case /404.html, so
+  // that single page has to answer in both languages and therefore carries two headings, one of
+  // them in a `hidden` block. Exempted by path rather than by weakening the rule everywhere.
+  const h1s =
+    urlPath === "/404.html" ? 1 : (html.match(/<h1[\s>]/g) || []).length;
+  if (h1s === 0) {
+    fail(
+      where,
+      "No light-DOM <h1>. A Grove element's heading lives in its shadow root and is absent from " +
+        "the server HTML — wrap it so a real heading ships too.",
+    );
+  } else if (h1s > 1) {
+    fail(where, `${h1s} light-DOM <h1> elements; there should be exactly one.`);
+  }
+}
+
+// ---- 2b. Phosphor icon coverage ----------------------------------------------------------------
+
+// Grove emits <ph-*> elements but never registers them. An icon name with no matching import
+// renders nothing at all, with no error anywhere — so the names used are checked against the
+// elements the client bundle actually defines.
+{
+  const iconNames = new Set();
+  for (const file of pages) {
+    const html = readFileSync(file, "utf8");
+    for (const m of html.matchAll(/\sicon="([a-z0-9-]+)"/g))
+      iconNames.add(m[1]);
+  }
+
+  if (iconNames.size) {
+    const assetDir = join(DIST, "_astro");
+    const bundles = existsSync(assetDir)
+      ? readdirSync(assetDir).filter((f) => f.endsWith(".js"))
+      : [];
+    const bundleSource = bundles
+      .map((f) => readFileSync(join(assetDir, f), "utf8"))
+      .join("\n");
+
+    for (const name of [...iconNames].sort()) {
+      // Phosphor registers <ph-kebab-name>; the module is PhPascalName.
+      if (!bundleSource.includes(`ph-${name}`)) {
+        const pascal = name.replace(/(^|-)([a-z])/g, (_a, _b, c) =>
+          c.toUpperCase(),
+        );
+        fail(
+          "client bundle",
+          `icon="${name}" is rendered but <ph-${name}> is not registered. ` +
+            `Add: import "@phosphor-icons/webcomponents/Ph${pascal}"; to BaseLayout's script.`,
+        );
+      }
+    }
   }
 }
 

@@ -1,0 +1,75 @@
+---
+/**
+ * A link that looks like a Grove button.
+ *
+ * Grove's `gv-button` always renders a `<button>` — it has no `href` — so a navigation control
+ * built from it has to be an anchor wrapping the element. That arrangement has a real defect worth
+ * stating, because the site already shipped it:
+ *
+ * **A `<button>` inside an `<a>` swallows the activation.** Per the HTML spec the innermost
+ * interactive element is the click's activation target, so the anchor never navigates. In practice
+ * Firefox does nothing at all on a mouse click. The current hero CTA is built exactly this way and
+ * is very likely dead for those users today.
+ *
+ * So: the anchor is the only tab stop and the only accessible name; the `gv-button` is marked
+ * `aria-hidden` and `tabindex="-1"` so it is pure decoration; and one delegated listener converts
+ * a click anywhere inside into real navigation, honouring modified clicks.
+ *
+ * With JavaScript off, or before the Grove bundle upgrades the tag, this is a plain working link
+ * with visible text — which is the whole reason for the light-DOM child.
+ */
+interface Props {
+  href: string;
+  text: string;
+  variant?: string;
+  color?: string;
+  size?: string;
+  /** Overrides the accessible name when the visible text is not descriptive on its own. */
+  label?: string;
+}
+
+const {
+  href,
+  text,
+  variant = "filled",
+  color = "accent",
+  size = "md",
+  label,
+} = Astro.props;
+---
+
+<a href={href} data-link-button aria-label={label ?? text}>
+  <gv-button
+    text={text}
+    variant={variant}
+    color={color}
+    size={size}
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    {text}
+  </gv-button>
+</a>
+
+<script>
+  // One delegated listener for every LinkButton on the page, rather than one per instance.
+  document.addEventListener("click", (event) => {
+    const target = event.target as Element | null;
+    const anchor = target?.closest?.(
+      "a[data-link-button]",
+    ) as HTMLAnchorElement | null;
+    if (!anchor) return;
+
+    // Let the browser handle anything it already handles correctly.
+    if (event.defaultPrevented) return;
+    const mouse = event as MouseEvent;
+    if (mouse.button !== 0) return;
+
+    event.preventDefault();
+    if (mouse.metaKey || mouse.ctrlKey || mouse.shiftKey) {
+      window.open(anchor.href, "_blank", "noopener");
+      return;
+    }
+    window.location.assign(anchor.href);
+  });
+</script>

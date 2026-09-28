@@ -1,4 +1,5 @@
 ---
+import LinkButton from "../../components/grove/LinkButton.astro";
 import { pathFor } from "../../i18n/routes";
 import { useTranslations } from "../../i18n/utils";
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -16,13 +17,10 @@ const t = useTranslations(lang);
     <h1>{t("hero.title")}</h1>
     <p>{t("hero.role")}</p>
     <p>{t("hero.description")}</p>
-    <a href={pathFor(lang, "contact")}>
-      <gv-button
-        text={t("hero.cta")}
-        variant="filled"
-        color="accent"
-        size="lg"
-      ></gv-button>
-    </a>
+    <LinkButton
+      href={pathFor(lang, "contact")}
+      text={t("hero.cta")}
+      size="lg"
+    />
   </section>
 </BaseLayout>

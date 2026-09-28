@@ -1,0 +1,17 @@
+---
+/**
+ * The skip link — first focusable thing on every page, so a keyboard or screen-reader visitor can
+ * jump past the header instead of tabbing through it on every page.
+ *
+ * It is a plain anchor on purpose: it must work before any bundle loads, which is exactly when a
+ * keyboard visitor is most likely to hit it.
+ */
+import { useTranslations } from "../../i18n/utils";
+import { getLang } from "../../i18n/routes";
+
+const t = useTranslations(getLang(Astro.url));
+---
+
+<a href="#main" data-skip-link>
+  {t("nav.skipToContent")}
+</a>

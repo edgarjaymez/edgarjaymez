@@ -1,0 +1,36 @@
+---
+/**
+ * A Grove title that still exists when JavaScript does not.
+ *
+ * `gv-title` takes its text as a string prop and has **no `<slot>`** — Grove has none, anywhere —
+ * so the server HTML for `<gv-title heading="…">` is an empty shell. A page whose only heading is a
+ * gv-title has no `<h1>` in `dist` at all: nothing for a crawler, nothing with JS off.
+ *
+ * The fix is to emit the real heading as a light-DOM child as well. Before the bundle upgrades the
+ * tag, the browser shows that heading. After it upgrades, the child is unslotted — and unslotted
+ * light DOM has no layout box and never reaches the accessibility tree — so it silently steps
+ * aside rather than duplicating the text.
+ *
+ * `gv-title` also hardcodes the ground surface, so it is wrong inside the journey's coloured
+ * scenes. Those use plain headings.
+ */
+interface Props {
+  text: string;
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** A Phosphor icon name. Whatever is named here must be imported in BaseLayout's script. */
+  icon?: string;
+  /** Skip gv-title entirely and render a plain heading — for coloured surfaces. */
+  plain?: boolean;
+}
+
+const { text, level = 2, icon, plain = false } = Astro.props;
+const Tag = `h${level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+---
+
+{plain ? (
+  <Tag>{text}</Tag>
+) : (
+  <gv-title heading={text} level={String(level)} icon={icon}>
+    <Tag>{text}</Tag>
+  </gv-title>
+)}

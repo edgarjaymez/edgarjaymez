@@ -1,0 +1,31 @@
+---
+/**
+ * The footer — "the clearing" in journey canon.
+ *
+ * Its links come from the per-locale site singleton rather than being hardcoded, so adding a
+ * profile is a content edit.
+ */
+import { getLang } from "../../i18n/routes";
+import { getSite } from "../../lib/content";
+
+const lang = getLang(Astro.url);
+const site = await getSite(lang);
+const year = new Date().getFullYear();
+---
+
+<footer id="clearing">
+  <ul>
+    {site.links.map((link) => (
+      <li>
+        <a href={link.href} rel="me noopener">
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p>
+    <small>
+      © {year} {site.profile.name}
+    </small>
+  </p>
+</footer>

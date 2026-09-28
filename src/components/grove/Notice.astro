@@ -1,0 +1,36 @@
+---
+/**
+ * A Grove feedback strip with its message present in the server HTML.
+ *
+ * Used for form errors and for the contact form's unwired state. Like every Grove element it takes
+ * strings and projects nothing, so the light-DOM copy is what exists before upgrade — which matters
+ * more here than elsewhere: a form error nobody can read is worse than no error.
+ *
+ * `role="status"` rather than `role="alert"`: alert interrupts whatever a screen reader is saying,
+ * which is right for a submission failure but wrong for the static notices this renders. The
+ * contact form passes `live="assertive"` for the case that genuinely needs interrupting.
+ */
+interface Props {
+  type?: "success" | "danger" | "information";
+  heading: string;
+  message: string;
+  live?: "polite" | "assertive";
+  id?: string;
+}
+
+const {
+  type = "information",
+  heading,
+  message,
+  live = "polite",
+  id,
+} = Astro.props;
+---
+
+<div id={id} role={live === "assertive" ? "alert" : "status"} aria-live={live}>
+  <gv-feedback-strip type={type} heading={heading} message={message}>
+    <p>
+      <strong>{heading}</strong> {message}
+    </p>
+  </gv-feedback-strip>
+</div>

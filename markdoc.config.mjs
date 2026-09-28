@@ -44,8 +44,40 @@ export default defineMarkdocConfig({
       },
     },
 
-    // The Grove-backed tags — `{% linkbutton %}` and `{% notice %}` — land with the Grove wrapper
-    // components in the layout-shell branch. Declaring them here before those components exist
-    // would break the build, and a tag that renders a missing component is worse than no tag.
+    /**
+     * `{% linkbutton href="/contact/" text="Get in touch" /%}`
+     *
+     * How content reaches Grove. Renders a real anchor with a `gv-button` inside, so the link
+     * still works with JavaScript off and stays a single tab stop.
+     */
+    linkbutton: {
+      render: component("./src/components/grove/LinkButton.astro"),
+      attributes: {
+        href: { type: String, required: true },
+        text: { type: String, required: true },
+        variant: { type: String, default: "filled" },
+        color: { type: String, default: "accent" },
+        size: { type: String, default: "md" },
+      },
+    },
+
+    /**
+     * `{% notice type="information" heading="…" message="…" /%}`
+     *
+     * Attributes rather than children, because `gv-feedback-strip` takes strings and projects
+     * nothing — a child would vanish on upgrade.
+     */
+    notice: {
+      render: component("./src/components/grove/Notice.astro"),
+      attributes: {
+        type: {
+          type: String,
+          default: "information",
+          matches: ["information", "success", "danger"],
+        },
+        heading: { type: String, required: true },
+        message: { type: String, required: true },
+      },
+    },
   },
 });
