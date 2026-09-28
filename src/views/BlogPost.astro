@@ -1,0 +1,59 @@
+---
+/**
+ * A single blog post, in one locale.
+ */
+import { render } from "astro:content";
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatDate, isoDate } from "../lib/format";
+import type { AnyEntry } from "../lib/content";
+import type { Locale } from "../i18n/routes";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  lang: Locale;
+  entry: AnyEntry;
+  slugs: Partial<Record<Locale, string>>;
+}
+
+const { lang, entry, slugs } = Astro.props;
+const t = useTranslations(lang);
+const { Content } = await render(entry);
+const data = entry.data as {
+  title: string;
+  description: string;
+  date: Date;
+  updated?: Date;
+  author?: string;
+  tags: string[];
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  route={{ key: "blog", slugs }}
+>
+  <article>
+    <header>
+      <h1>{data.title}</h1>
+      <p>
+        {data.author && <span>{data.author}</span>}
+        <time datetime={isoDate(data.date)}>{formatDate(data.date, lang)}</time>
+        {data.updated && (
+          <span>
+            {t("entry.updated", { date: formatDate(data.updated, lang) })}
+          </span>
+        )}
+      </p>
+      {data.tags.length > 0 && (
+        <ul>
+          {data.tags.map((tag) => (
+            <li>{tag}</li>
+          ))}
+        </ul>
+      )}
+    </header>
+    <Content />
+  </article>
+</BaseLayout>
