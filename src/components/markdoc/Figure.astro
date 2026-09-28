@@ -1,0 +1,35 @@
+---
+/**
+ * The figure rendered for both the `image` node (`![alt](./x.png)`) and the `image` tag
+ * (`{% image src alt caption /%}`).
+ *
+ * It is bound to the name `image` in markdoc.config.mjs because the integration only resolves and
+ * optimizes `src` for a node or tag with exactly that name. A more descriptive name here would
+ * cost the optimization.
+ *
+ * Structure only — no styling. `alt` is required by the schema, so a decorative image has to say so
+ * explicitly with `alt=""` rather than by omission.
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  /** Resolved to ImageMetadata by the integration for local paths; a string for remote ones. */
+  src: ImageMetadata | string;
+  alt: string;
+  caption?: string;
+}
+
+const { src, alt, caption } = Astro.props;
+
+const isLocal = typeof src !== "string";
+---
+
+<figure>
+  {isLocal ? (
+    <Image src={src} alt={alt} loading="lazy" decoding="async" />
+  ) : (
+    <img src={src} alt={alt} loading="lazy" decoding="async" />
+  )}
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

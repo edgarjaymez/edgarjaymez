@@ -1,0 +1,44 @@
+# Per-locale site copy. Everything a visitor reads that is not an entry lives here.
+# Scene titles are the single source for both the scene heading and its rail label.
+profile:
+  name: Edgar Jaymez
+  role: Design Technologist
+  summary: >-
+    Building scalable design systems that work in Figma and in production;
+    from token architecture to shipped Web Components.
+
+availability:
+  open: true
+  note: Open to design systems work.
+
+links:
+  - label: GitHub
+    href: https://github.com/edgarjaymez
+
+principles:
+  - title: One source, two audiences
+    body: A token should mean the same thing to a designer and to a build step.
+  - title: Structure before style
+    body: A page should read correctly before it looks like anything.
+  - title: Ship the boring parts
+    body: Accessibility and i18n are load-bearing, not polish.
+
+nowCooking: An OKLCH palette extractor, so the scenery can be drawn in real Grove colours.
+
+scenes:
+  - key: entrance
+    title: The Entrance
+    intro: You find a path, and it is painted in a colour you have not seen yet.
+  - key: commons
+    eyebrow: Common Grounds
+    title: Common Grounds
+    intro: The canopy closes over. Three stumps, worn smooth from use.
+  - key: quarters
+    title: The Quarters
+    intro: Doors in the great trunks. Each one opens on a piece of work.
+  - key: kitchen
+    title: The Kitchen
+    intro: Something is simmering. Not all of it will be served.
+  - key: fire
+    title: The Fire Circle
+    intro: Rings in the wood, one for each year of telling.

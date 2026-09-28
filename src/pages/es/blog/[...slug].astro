@@ -14,10 +14,19 @@
 import { getCollection, render } from "astro:content";
 
 import { localeMeta, type Locale } from "../../../i18n/routes";
+import { reportTranslationParity } from "../../../lib/content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
-  const pages = await getCollection("blog");
+  // Runs once per build. Moves to the real index pages when they land.
+  await reportTranslationParity();
+
+  // Drafts are visible while developing and must never reach a build. This route predates
+  // src/lib/content.ts and globs every locale, so the filter is applied here explicitly rather
+  // than inherited — the real routes go through getEntries().
+  const pages = (await getCollection("blog")).filter(
+    (page) => import.meta.env.DEV || !page.data.draft,
+  );
 
   return pages.map((page) => {
     const [, ...slug] = page.id.split("/");
